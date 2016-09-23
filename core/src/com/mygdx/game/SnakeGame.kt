@@ -6,6 +6,5 @@ class SnakeGame : Game() {
 
     override fun create() {
         setScreen(MyGdxGame())
-
     }
 }
