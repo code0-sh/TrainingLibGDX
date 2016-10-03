@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 
+
 class MyGdxGame : ScreenAdapter() {
     private lateinit var batch: SpriteBatch
     private lateinit var balls: List<TextureAtlas.AtlasRegion>
@@ -29,6 +30,7 @@ class MyGdxGame : ScreenAdapter() {
     private val scale = 0.5f
     private val gravity = -98f
 
+
     override fun render(delta: Float) {
         // tell the camera to update its matrices.
         camera.update()
@@ -39,6 +41,7 @@ class MyGdxGame : ScreenAdapter() {
 
         Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
@@ -67,6 +70,7 @@ class MyGdxGame : ScreenAdapter() {
         ball = Sprite(balls[0])
         ball.setPosition(10f, 10f)
         ball.setScale(scale)
+
         ballWidth = ball.width
         ballHeight = ball.height
         ball.setBounds( camera.position.x - (ballWidth / 2), camera.position.y - (ballHeight / 2), ballWidth, ballHeight)
