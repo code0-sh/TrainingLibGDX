@@ -1,25 +1,25 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 
 
 class MyGdxGame : ScreenAdapter() {
-    private lateinit var batch: SpriteBatch
     private lateinit var balls: List<TextureAtlas.AtlasRegion>
     private lateinit var assetManager: AssetManager
-    private lateinit var ball: Sprite
+    private lateinit var ball: Image
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
     var ballWidth: Float = 0f
@@ -28,7 +28,8 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var world: World
     private lateinit var body: Body
     private val scale = 0.5f
-    private val gravity = -98f
+    private val gravity = -9.8f
+    private lateinit var stage: Stage
 
 
     override fun render(delta: Float) {
@@ -42,32 +43,29 @@ class MyGdxGame : ScreenAdapter() {
         Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-
-        // tell the SpriteBatch to render in the
-        // coordinate system specified by the camera.
-        batch.projectionMatrix = camera.combined
-
         ball.setBounds(body.position.x - (ballWidth / 2), body.position.y - (ballHeight / 2), ballWidth, ballHeight)
 
-        batch.begin()
-        batch.draw(ball, ball.x, ball.y, ball.originX, ball.originY)
-        batch.end()
+        stage.act(Gdx.graphics.deltaTime)
+        stage.draw()
     }
 
     override fun show() {
+        // Resource
         loadResource()
 
+        // Screen
         screenWidth = Gdx.graphics.width.toFloat()
         screenHeight = Gdx.graphics.height.toFloat()
+
+        // Camera
         camera = OrthographicCamera(screenWidth, screenHeight)
         camera.position.set(screenWidth / 2, screenHeight / 2, 0f)
         camera.update()
 
-        batch = SpriteBatch()
-
+        // Ball
         createBalls()
 
-        ball = Sprite(balls[0])
+        ball = Image(balls[0])
         ball.setPosition(10f, 10f)
         ball.setScale(scale)
 
@@ -75,35 +73,25 @@ class MyGdxGame : ScreenAdapter() {
         ballHeight = ball.height
         ball.setBounds( camera.position.x - (ballWidth / 2), camera.position.y - (ballHeight / 2), ballWidth, ballHeight)
 
+        // Event
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                println("001がクリックされた！")
+            }
+        }
+        ball.addListener(listener)
 
+        // Stage
+        stage = Stage()
+        Gdx.input.setInputProcessor(stage)
+        stage.addActor(ball)
+
+        // World
         world = World(Vector2(0f, gravity), true)
         val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.position.set(ball.x, ball.y)
         body = world.createBody(bodyDef)
-
-
-        Gdx.input.inputProcessor = object: InputAdapter() {
-            override fun touchDown(screenX:Int, screenY:Int, pointer:Int, button:Int):Boolean {
-                if (ball.boundingRectangle.contains(screenX.toFloat() + (ball.width/2) * scale, screenHeight - screenY.toFloat() + (ball.height/2) * scale)) {
-                    //println("screenX ${screenX.toFloat()} /")
-                    //println("screenHeight - screenY.toFloat() ${screenHeight - screenY.toFloat()} /")
-                    //println("ball.x ${ball.x} /")
-                    //println("ball.y ${ball.y} /")
-                    //println("ball.originX ${ball.originX} /")
-                    //println("ball.originY ${ball.originY} /")
-                    //println("camera.position.x ${camera.position.x} /")
-                    //println("camera.position.y ${camera.position.y}")
-                    //println("body.position.x ${body.position.x} /")
-                    //println("body.position.y ${body.position.y} /")
-                    //println("ball.boundingRectangle.x ${ball.boundingRectangle.x} /")
-                    //println("ball.boundingRectangle.y ${ball.boundingRectangle.y} /")
-                    //println("ball.width / 2 ${ball.width / 2} /")
-                    println("Ball Clicked!!")
-                }
-                return true
-            }
-        }
     }
 
     override fun dispose() {
