@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 
@@ -67,6 +68,7 @@ class MyGdxGame : ScreenAdapter() {
 
         ball = Image(balls[0])
         ball.setPosition(10f, 10f)
+        ball.setOrigin(ball.width / 2, ball.height / 2)
         ball.setScale(scale)
 
         ballWidth = ball.width
@@ -76,7 +78,19 @@ class MyGdxGame : ScreenAdapter() {
         // Event
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
-                println("001がクリックされた！")
+                println("Ballがクリックされた！")
+
+                // Action
+                val actionSequence = Actions.sequence()
+                val rotationAction = Actions.rotateBy(180 * 8 / Math.PI.toFloat(), 0.3f)
+                val moveByYAction = Actions.moveTo(0f, 1500f, 0.25f)
+                val removeActorAction = Actions.removeActor()
+
+                actionSequence.addAction(rotationAction)
+                actionSequence.addAction(moveByYAction)
+                actionSequence.addAction(removeActorAction)
+
+                ball.addAction(actionSequence)
             }
         }
         ball.addListener(listener)
