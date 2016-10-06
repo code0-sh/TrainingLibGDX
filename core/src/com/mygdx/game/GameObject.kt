@@ -18,7 +18,7 @@ open class GameObject(x:Float, y:Float, image:Image) {
     var y = 0f
     protected set
 
-    init{
+    init {
         this.image = image
         updatePosition(x, y)
     }
