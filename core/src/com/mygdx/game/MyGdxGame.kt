@@ -15,9 +15,11 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import java.util.*
 
 class MyGdxGame : ScreenAdapter() {
     private lateinit var assetManager: Assets
@@ -159,26 +161,43 @@ class MyGdxGame : ScreenAdapter() {
     }
 
     private fun setupBall() {
-        val ball = Ball.create(stage, assetManager.ballAtlas)
+        val random = Random()
+        val num = random.nextInt(assetManager.ballAtlas.size)
+
+        val x = random.nextFloat() * (Gdx.graphics.width - Ball.SIZE)
+        val y = Gdx.graphics.height.toFloat() - Ball.SIZE
+        val image = Image(assetManager.ballAtlas[num])
+        val name = num.toString()
+
+        val ball = Ball(x, y, image, name)
+
+        ball.setup(stage)
         balls.add(ball)
     }
 
     private fun setupBody() {
         val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
-        bodyDef.position.set(Gdx.graphics.width.toFloat() - Ball.SIZE, Gdx.graphics.height.toFloat() - Ball.SIZE)
+        bodyDef.position.set(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
         body = world.createBody(bodyDef)
         body.isActive = true
         bodys.add(body)
     }
 
     private fun update(delta:Float) {
-        for( index in balls.indices) {
+        for ( index in balls.indices) {
+            // 地面と衝突
             if (balls[index].y + Ball.SIZE < 0 ) {
                 balls[index].isOffScreen = true
                 bodys[index].isActive = false
             }
+            // 壁と衝突
+            if (balls[index].x < 0 || Gdx.graphics.width - Ball.SIZE < balls[index].x) {
+                println("壁と衝突")
+                balls[index].isWallCollided = true
+            }
         }
+
 
         balls.toList().forEach {
             if (it.isOffScreen) {

@@ -1,13 +1,10 @@
 package com.mygdx.game
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import java.util.*
 
 /**
  * ボールのイメージ、初期位置を設定
@@ -16,7 +13,7 @@ import java.util.*
  * @param image ボールのイメージ
  */
 
-class Ball(x:Float, y:Float, image: Image) : GameObject(x, y, image) {
+class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, image) {
 
     companion object {
         /**
@@ -52,47 +49,28 @@ class Ball(x:Float, y:Float, image: Image) : GameObject(x, y, image) {
          * ボールの上昇時間
          */
         private const val RISE_TIME = 0.25f
+    }
 
-        /**
-         * ボールを生成してイベントを設定しStageに設定する
-         * @param stage Stage
-         * @param ballAtlas List<TextureAtlas.AtlasRegion>
-         * @return Ball
-         */
-        fun create(stage:Stage, ballAtlas:List<TextureAtlas.AtlasRegion>): Ball {
-            val random = Random()
-            val num = random.nextInt(ballAtlas.size)
-            val x = SIZE / 2 + random.nextFloat() * (Gdx.graphics.width - SIZE)
-            val ballImage = Image(ballAtlas[num])
-            //ballImage.setScale(scale)
+    /**
+     * ボールの名前
+     */
+    var name: String = ""
 
-            val ball = Ball(x, Gdx.graphics.height.toFloat() - SIZE, ballImage)
-            ball.setSize(SIZE, SIZE)
-            ball.setOrigin(SIZE / 2, SIZE / 2)
-            ball.name = num.toString()
+    /**
+     * ボールが面外にあるかどうか
+     */
+    var isOffScreen = false
 
-            // Event
-            val listener = object: ClickListener() {
-                override fun clicked(event: InputEvent, x:Float, y:Float) {
-                    println("Ball:No.${ball.name}がクリックされた！")
+    /**
+     * ボールが壁と衝突したかどうか
+     */
+    var isWallCollided = false
 
-                    // Action
-                    val actionSequence = Actions.sequence()
-                    val rotationAction = Actions.rotateBy(ROTATE, ROTATE_TIME)
-                    val moveByYAction = Actions.moveTo(ball.x, RISE_DISTANCE, RISE_TIME)
-                    val removeActorAction = Actions.removeActor()
-
-                    actionSequence.addAction(rotationAction)
-                    actionSequence.addAction(moveByYAction)
-                    actionSequence.addAction(removeActorAction)
-
-                    ballImage.addAction(actionSequence)
-                }
-            }
-            ballImage.addListener(listener)
-            stage.addActor(ballImage)
-            return ball
-        }
+    init {
+        this.x = x
+        this.y = y
+        this.image = image
+        this.name = name
     }
 
     /**
@@ -106,19 +84,6 @@ class Ball(x:Float, y:Float, image: Image) : GameObject(x, y, image) {
     private var directionX = 2f
 
     /**
-     * 移動値Y
-     */
-//    private var directionY = 2f
-
-    /**
-     * 移動方向反転
-     */
-//    private fun changeDirection() {
-//        changeDirectionX()
-//        changeDirectionY()
-//    }
-
-    /**
      * 移動方向反転(X座標)
      */
     private fun changeDirectionX() {
@@ -126,21 +91,37 @@ class Ball(x:Float, y:Float, image: Image) : GameObject(x, y, image) {
     }
 
     /**
-     * 移動方向反転(Y座標)
+     * ボールをStageに設定する
+     * @param stage Stage
      */
-//    private fun changeDirectionY() {
-//        directionY *= -1
-//    }
+    private fun addStage(stage: Stage) {
+        stage.addActor(this.image)
+    }
 
     /**
-     * ボールの名前
+     * ボールのイベントを設定する
      */
-    lateinit var name: String
+    private fun addListener() {
+        val ball = this
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                println("Ball:No.${ball.name}がクリックされた！")
 
-    /**
-     * ボールが面外にあるかどうか
-     */
-    var isOffScreen = false
+                // Action
+                val actionSequence = Actions.sequence()
+                val rotationAction = Actions.rotateBy(ROTATE, ROTATE_TIME)
+                val moveByYAction = Actions.moveTo(ball.x, RISE_DISTANCE, RISE_TIME)
+                val removeActorAction = Actions.removeActor()
+
+                actionSequence.addAction(rotationAction)
+                actionSequence.addAction(moveByYAction)
+                actionSequence.addAction(removeActorAction)
+
+                ball.image.addAction(actionSequence)
+            }
+        }
+        ball.image.addListener(listener)
+    }
 
     /**
      * ボールの位置の更新
@@ -153,6 +134,21 @@ class Ball(x:Float, y:Float, image: Image) : GameObject(x, y, image) {
             this.changeDirectionX()
             this.timeStraightDirectionX = 0f
         }
+        if (isWallCollided) {
+            this.changeDirectionX()
+            this.isWallCollided = false
+        }
         this.updatePosition(x + directionX, bodyPositionY)
+    }
+
+    /**
+     * ボールの設定
+     * @param stage Stage
+     */
+    fun setup(stage: Stage) {
+        this.setSize(Ball.SIZE, Ball.SIZE)
+        this.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
+        this.addListener()
+        this.addStage(stage)
     }
 }
