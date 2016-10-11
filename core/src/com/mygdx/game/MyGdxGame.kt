@@ -3,6 +3,7 @@ package com.mygdx.game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
@@ -41,6 +42,10 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var uiCamera: OrthographicCamera
     private var isOnTimer = false
 
+    private var major = 99
+    private var time = 8
+    private lateinit var freeTypeFontTimer: FreeTypeFont
+
     override fun render(delta: Float) {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -58,6 +63,7 @@ class MyGdxGame : ScreenAdapter() {
 
         // カメラの座標の文字列を作って
         val info = String.format("cam pos(%f,%f)", camera.position.x, camera.position.y)
+        //val info = "アイウエオ"
 
         // tell the camera to update its matrices.
         camera.update()
@@ -129,6 +135,25 @@ class MyGdxGame : ScreenAdapter() {
 
         // Timer
         setupTimer()
+
+        // Start Label
+        val freeTypeFontStart = FreeTypeFont("Start !!")
+        freeTypeFontStart.setColor(Color.ORANGE)
+        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.3f, Gdx.graphics.height * 0.9f)
+        stage.addActor(freeTypeFontStart.label)
+
+        // Major Code Label
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは${major}です!")
+        freeTypeFontMajorCode.setColor(Color.RED)
+        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setCenterBottom()
+        stage.addActor(freeTypeFontMajorCode.label)
+
+        // Timer Label
+        freeTypeFontTimer = FreeTypeFont("TIME : ${time}")
+        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
+        stage.addActor(freeTypeFontTimer.label)
+
     }
 
     override fun resize(width: Int, height: Int) {
@@ -154,6 +179,14 @@ class MyGdxGame : ScreenAdapter() {
                     setupBody()
                 }
             }, 0f, 0.45f)
+
+            Timer.schedule(object: Timer.Task() {
+                override fun run() {
+                    time -= 1
+                    if (time < 0) time = 8
+                    freeTypeFontTimer.setText("TIME : ${time}")
+                }
+            }, 0f, 1f)
         } else if (Gdx.input.isTouched) {
             // タイマークリア
             //Timer.instance().clear()
