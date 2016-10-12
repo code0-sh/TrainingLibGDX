@@ -153,7 +153,7 @@ class MyGdxGame : ScreenAdapter() {
     }
 
     /**
-     * ラベルを生成
+     * ラベルの生成
      */
     private fun createLabel() {
         // Ball Group
@@ -186,6 +186,9 @@ class MyGdxGame : ScreenAdapter() {
         labelGroup.addActor(freeTypeFontTimer.label)
     }
 
+    /**
+     * Timerの設定
+     */
     private fun setupTimer() {
         if (!isOnTimer) {
             isOnTimer = true
@@ -237,6 +240,10 @@ class MyGdxGame : ScreenAdapter() {
         bodys.add(body)
     }
 
+    /**
+     * 更新
+     * @param delta 更新間隔
+     */
     private fun update(delta:Float) {
         for ( index in balls.indices) {
             // 地面と衝突

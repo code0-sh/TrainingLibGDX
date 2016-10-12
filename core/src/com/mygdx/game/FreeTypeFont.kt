@@ -51,6 +51,9 @@ class FreeTypeFont(text: String) {
         label.color = fontColor
     }
 
+    /**
+     * labelの位置を画面下中央に設定
+     */
     fun setCenterBottom() {
         val font = createFont(fontSize)
         val layout = GlyphLayout(font, label.text)
