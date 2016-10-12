@@ -98,6 +98,9 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
                 println("Ball:No.${ball.name}がクリックされた！")
+                GameState.update(ball.name.toInt())
+                println("GameState.number:" + GameState.number)
+                println("GameState.score:" + GameState.score)
 
                 // Action
                 val actionSequence = Actions.sequence()

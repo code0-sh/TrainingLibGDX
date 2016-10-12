@@ -31,7 +31,6 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var body: Body
     private var bodys: MutableList<Body> = mutableListOf()
 //    private val scale = 0.5f
-    private val gravity = -98f
     private lateinit var stage: Stage
     private lateinit var viewport: Viewport
 
@@ -41,12 +40,7 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var shapeRenderer: ShapeRenderer
     private lateinit var font: BitmapFont
     private lateinit var uiCamera: OrthographicCamera
-    private var isOnTimer = false
-
-    private var major = 99
-    private var time = 8
     private lateinit var freeTypeFontTimer: FreeTypeFont
-
     private lateinit var labelGroup: Group
     private lateinit var ballGroup: Group
 
@@ -109,7 +103,7 @@ class MyGdxGame : ScreenAdapter() {
         assetManager = Assets()
 
         // World
-        world = World(Vector2(0f, gravity), true)
+        world = World(Vector2(0f, GameState.gravity), true)
 
         batch = SpriteBatch()
         bgImg = Texture("bg.png")
@@ -140,6 +134,9 @@ class MyGdxGame : ScreenAdapter() {
 
         // Label
         createLabel()
+
+        // GameState
+        GameState.initGameSate()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -174,14 +171,14 @@ class MyGdxGame : ScreenAdapter() {
         labelGroup.addActor(freeTypeFontStart.label)
 
         // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + major + "です!")
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(20)
         freeTypeFontMajorCode.setCenterBottom()
         labelGroup.addActor(freeTypeFontMajorCode.label)
 
         // Timer Label
-        freeTypeFontTimer = FreeTypeFont("TIME : $time")
+        freeTypeFontTimer = FreeTypeFont("TIME : ${GameState.time}")
         freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
         labelGroup.addActor(freeTypeFontTimer.label)
     }
@@ -190,8 +187,8 @@ class MyGdxGame : ScreenAdapter() {
      * Timerの設定
      */
     private fun setupTimer() {
-        if (!isOnTimer) {
-            isOnTimer = true
+        if (!GameState.isOnTimer) {
+            GameState.isOnTimer = true
             // Timer
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
@@ -205,14 +202,18 @@ class MyGdxGame : ScreenAdapter() {
 
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
-                    time -= 1
-                    if (time < 0) time = 8
-                    freeTypeFontTimer.setText("TIME : $time")
+                    GameState.time -= 1
+                    if (GameState.time < 0 && GameState.score == 0) {
+                        GameState.time = 8
+                    }
+                    if (GameState.time < 0 && GameState.score != 0) {
+                        println("End")
+                        Timer.instance().clear()
+                        return
+                    }
+                    freeTypeFontTimer.setText("TIME : ${GameState.time}")
                 }
             }, 0f, 1f)
-        } else if (Gdx.input.isTouched) {
-            // タイマークリア
-            //Timer.instance().clear()
         }
     }
 
@@ -253,7 +254,7 @@ class MyGdxGame : ScreenAdapter() {
             }
             // 壁と衝突
             if (balls[index].x < 0 || Gdx.graphics.width - Ball.SIZE < balls[index].x) {
-                println("壁と衝突")
+                //println("壁と衝突")
                 balls[index].isWallCollided = true
             }
         }
