@@ -16,19 +16,19 @@ class Assets {
          * ボールのテクスチャアトラスファイル
          */
         private const val BALLS_RESOURCE = "balls.txt"
-
-        /**
-         * AssetManagerを破棄する
-         */
-        fun dispose() {
-            this.dispose()
-        }
     }
 
     init {
         assetManager = AssetManager()
         this.loadResource()
         this.createBallAtlas()
+    }
+
+    /**
+     * AssetManagerを破棄する
+     */
+    fun dispose() {
+        assetManager.dispose()
     }
 
     /**

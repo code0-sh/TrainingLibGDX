@@ -1,86 +1,33 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.FitViewport
-import com.badlogic.gdx.utils.viewport.Viewport
+import java.util.*
 
-class ResultScreen(game: SnakeGame) : Screen {
-    private lateinit var stage: Stage
-    private lateinit var camera: OrthographicCamera
-    private lateinit var uiCamera: OrthographicCamera
-    private lateinit var viewport: Viewport
-    private lateinit var bgImg: Texture
-    private lateinit var bg: Sprite
-    private lateinit var batch: SpriteBatch
-
-    internal val game: SnakeGame
+class ResultScreen(game: BallGame) : ScreenAdapter() {
+    private var ball: Sprite
+    internal val game: BallGame
 
     init {
         this.game = game
-    }
 
-    override fun pause() {
-
-    }
-    override fun hide() {
-
-    }
-
-    override fun resume() {
-
+        // Ball
+        val random = Random()
+        val num = random.nextInt(game.assetManager.ballAtlas.size)
+        ball = Sprite(game.assetManager.ballAtlas[num])
+        ball.setSize(Ball.SIZE, Ball.SIZE)
+        ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
+        ball.setPosition((Gdx.graphics.width - Ball.SIZE) / 2, (Gdx.graphics.height - Ball.SIZE) / 2)
     }
 
     override fun render(delta: Float) {
-
-        // tell the camera to update its matrices.
-        camera.update()
-        batch.projectionMatrix = camera.combined
-
-        uiCamera.update()
-        batch.projectionMatrix = uiCamera.combined
-
-        batch.begin()
-        bg.draw(batch)
-        batch.end()
-
-    }
-
-    override fun show() {
-        batch = SpriteBatch()
-        bgImg = Texture("bg.png")
-        bg = Sprite(bgImg)
-        bg.setScale(2.0f, 2.0f)
-        bg.setPosition(0f, 0f)
-
-        // Camera
-        camera = OrthographicCamera(800f, 480f)
-        camera.setToOrtho(false, 800f, 480f)
-
-        uiCamera = OrthographicCamera()
-        uiCamera.setToOrtho(false, 800f, 480f)
-
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
-        // Viewport
-        viewport = FitViewport(800f, 480f, camera)
-
-        // Stage
-        stage = Stage()
-        Gdx.input.inputProcessor = stage
-    }
-
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        game.batch.begin()
+        ball.draw(game.batch)
+        game.batch.end()
     }
 
     override fun dispose() {
+        println("ResultScreen dispose")
     }
 }

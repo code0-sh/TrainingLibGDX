@@ -79,7 +79,7 @@ class FreeTypeFont(text: String) {
         val generator = FreeTypeFontGenerator(Gdx.files.internal("font/" + "GenEiGothicM-Regular.ttf"))
         val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
         parameter.size = fontSize
-        parameter.characters = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!1234567890現在ライトアップエリアで: "
+        parameter.characters = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!-1234567890現在ライトアップエリアで: "
         return generator.generateFont(parameter)
     }
 
