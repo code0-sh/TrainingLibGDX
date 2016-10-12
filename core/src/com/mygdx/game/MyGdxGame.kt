@@ -3,6 +3,7 @@ package com.mygdx.game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
@@ -14,6 +15,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Timer
@@ -29,7 +31,6 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var body: Body
     private var bodys: MutableList<Body> = mutableListOf()
 //    private val scale = 0.5f
-    private val gravity = -98f
     private lateinit var stage: Stage
     private lateinit var viewport: Viewport
 
@@ -39,7 +40,9 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var shapeRenderer: ShapeRenderer
     private lateinit var font: BitmapFont
     private lateinit var uiCamera: OrthographicCamera
-    private var isOnTimer = false
+    private lateinit var freeTypeFontTimer: FreeTypeFont
+    private lateinit var labelGroup: Group
+    private lateinit var ballGroup: Group
 
     override fun render(delta: Float) {
 
@@ -58,6 +61,7 @@ class MyGdxGame : ScreenAdapter() {
 
         // カメラの座標の文字列を作って
         val info = String.format("cam pos(%f,%f)", camera.position.x, camera.position.y)
+        //val info = "アイウエオ"
 
         // tell the camera to update its matrices.
         camera.update()
@@ -99,7 +103,7 @@ class MyGdxGame : ScreenAdapter() {
         assetManager = Assets()
 
         // World
-        world = World(Vector2(0f, gravity), true)
+        world = World(Vector2(0f, GameState.gravity), true)
 
         batch = SpriteBatch()
         bgImg = Texture("bg.png")
@@ -121,14 +125,18 @@ class MyGdxGame : ScreenAdapter() {
         // Viewport
         viewport = FitViewport(800f, 480f, camera)
 
-        // Wall
-
         // Stage
         stage = Stage()
         Gdx.input.inputProcessor = stage
 
         // Timer
         setupTimer()
+
+        // Label
+        createLabel()
+
+        // GameState
+        GameState.initGameSate()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -141,9 +149,46 @@ class MyGdxGame : ScreenAdapter() {
         font.dispose()
     }
 
+    /**
+     * ラベルの生成
+     */
+    private fun createLabel() {
+        // Ball Group
+        ballGroup = Group()
+        ballGroup.setPosition(0f, 0f)
+        stage.addActor(ballGroup)
+
+        // Label Group
+        labelGroup = Group()
+        labelGroup.setPosition(0f, 0f)
+        stage.addActor(labelGroup)
+
+
+        // Start Label
+        val freeTypeFontStart = FreeTypeFont("Start !!")
+        freeTypeFontStart.setColor(Color.ORANGE)
+        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.3f, Gdx.graphics.height * 0.9f)
+        labelGroup.addActor(freeTypeFontStart.label)
+
+        // Major Code Label
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
+        freeTypeFontMajorCode.setColor(Color.RED)
+        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setCenterBottom()
+        labelGroup.addActor(freeTypeFontMajorCode.label)
+
+        // Timer Label
+        freeTypeFontTimer = FreeTypeFont("TIME : ${GameState.time}")
+        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
+        labelGroup.addActor(freeTypeFontTimer.label)
+    }
+
+    /**
+     * Timerの設定
+     */
     private fun setupTimer() {
-        if (!isOnTimer) {
-            isOnTimer = true
+        if (!GameState.isOnTimer) {
+            GameState.isOnTimer = true
             // Timer
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
@@ -154,9 +199,21 @@ class MyGdxGame : ScreenAdapter() {
                     setupBody()
                 }
             }, 0f, 0.45f)
-        } else if (Gdx.input.isTouched) {
-            // タイマークリア
-            //Timer.instance().clear()
+
+            Timer.schedule(object: Timer.Task() {
+                override fun run() {
+                    GameState.time -= 1
+                    if (GameState.time < 0 && GameState.score == 0) {
+                        GameState.time = 8
+                    }
+                    if (GameState.time < 0 && GameState.score != 0) {
+                        println("End")
+                        Timer.instance().clear()
+                        return
+                    }
+                    freeTypeFontTimer.setText("TIME : ${GameState.time}")
+                }
+            }, 0f, 1f)
         }
     }
 
@@ -171,7 +228,7 @@ class MyGdxGame : ScreenAdapter() {
 
         val ball = Ball(x, y, image, name)
 
-        ball.setup(stage)
+        ball.setup(ballGroup)
         balls.add(ball)
     }
 
@@ -184,6 +241,10 @@ class MyGdxGame : ScreenAdapter() {
         bodys.add(body)
     }
 
+    /**
+     * 更新
+     * @param delta 更新間隔
+     */
     private fun update(delta:Float) {
         for ( index in balls.indices) {
             // 地面と衝突
@@ -193,7 +254,7 @@ class MyGdxGame : ScreenAdapter() {
             }
             // 壁と衝突
             if (balls[index].x < 0 || Gdx.graphics.width - Ball.SIZE < balls[index].x) {
-                println("壁と衝突")
+                //println("壁と衝突")
                 balls[index].isWallCollided = true
             }
         }

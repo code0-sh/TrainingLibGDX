@@ -55,13 +55,25 @@ open class GameObject(x:Float, y:Float, image:Image) {
         return y
     }
 
+    /**
+     * オブジェクトの大きさを設定
+     */
     fun setSize(x:Float, y:Float) {
         image.setSize(x, y)
     }
 
+    /**
+     * オブジェクトが拡大・回転する際の中心を設定
+     */
     fun setOrigin(x:Float, y:Float) {
         image.setOrigin(x, y)
     }
+
+    /**
+     * オブジェクトの位置の更新
+     * @param x 移動後のX座標
+     * @param y 移動後のY座標
+     */
     fun updatePosition(x:Float, y:Float) {
         this.x = x
         this.y = y
