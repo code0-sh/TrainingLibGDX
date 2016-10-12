@@ -2,7 +2,7 @@ package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import java.util.*
 
-class MyGdxGame : ScreenAdapter() {
+class MyGdxGame(game: SnakeGame) : Screen {
     private lateinit var assetManager: Assets
     private var balls: MutableList<Ball> = mutableListOf()
     private lateinit var camera: OrthographicCamera
@@ -43,6 +43,23 @@ class MyGdxGame : ScreenAdapter() {
     private lateinit var freeTypeFontTimer: FreeTypeFont
     private lateinit var labelGroup: Group
     private lateinit var ballGroup: Group
+
+    internal val game: SnakeGame
+
+    init {
+        this.game = game
+    }
+
+    override fun pause() {
+
+    }
+    override fun hide() {
+
+    }
+
+    override fun resume() {
+
+    }
 
     override fun render(delta: Float) {
 
@@ -144,7 +161,7 @@ class MyGdxGame : ScreenAdapter() {
     }
 
     override fun dispose() {
-        Assets.dispose()
+        //Assets.dispose()
         bgImg.dispose()
         font.dispose()
     }
@@ -162,7 +179,6 @@ class MyGdxGame : ScreenAdapter() {
         labelGroup = Group()
         labelGroup.setPosition(0f, 0f)
         stage.addActor(labelGroup)
-
 
         // Start Label
         val freeTypeFontStart = FreeTypeFont("Start !!")
@@ -187,6 +203,7 @@ class MyGdxGame : ScreenAdapter() {
      * Timerの設定
      */
     private fun setupTimer() {
+        val self = this
         if (!GameState.isOnTimer) {
             GameState.isOnTimer = true
             // Timer
@@ -209,6 +226,11 @@ class MyGdxGame : ScreenAdapter() {
                     if (GameState.time < 0 && GameState.score != 0) {
                         println("End")
                         Timer.instance().clear()
+
+
+                        game.screen = ResultScreen(game)
+                        self.dispose()
+
                         return
                     }
                     freeTypeFontTimer.setText("TIME : ${GameState.time}")
