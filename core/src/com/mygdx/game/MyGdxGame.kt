@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Timer
@@ -45,6 +46,9 @@ class MyGdxGame : ScreenAdapter() {
     private var major = 99
     private var time = 8
     private lateinit var freeTypeFontTimer: FreeTypeFont
+
+    private lateinit var labelGroup: Group
+    private lateinit var ballGroup: Group
 
     override fun render(delta: Float) {
 
@@ -127,8 +131,6 @@ class MyGdxGame : ScreenAdapter() {
         // Viewport
         viewport = FitViewport(800f, 480f, camera)
 
-        // Wall
-
         // Stage
         stage = Stage()
         Gdx.input.inputProcessor = stage
@@ -136,24 +138,8 @@ class MyGdxGame : ScreenAdapter() {
         // Timer
         setupTimer()
 
-        // Start Label
-        val freeTypeFontStart = FreeTypeFont("Start !!")
-        freeTypeFontStart.setColor(Color.ORANGE)
-        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.3f, Gdx.graphics.height * 0.9f)
-        stage.addActor(freeTypeFontStart.label)
-
-        // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは${major}です!")
-        freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(20)
-        freeTypeFontMajorCode.setCenterBottom()
-        stage.addActor(freeTypeFontMajorCode.label)
-
-        // Timer Label
-        freeTypeFontTimer = FreeTypeFont("TIME : ${time}")
-        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
-        stage.addActor(freeTypeFontTimer.label)
-
+        // Label
+        createLabel()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -164,6 +150,40 @@ class MyGdxGame : ScreenAdapter() {
         Assets.dispose()
         bgImg.dispose()
         font.dispose()
+    }
+
+    /**
+     * ラベルを生成
+     */
+    private fun createLabel() {
+        // Ball Group
+        ballGroup = Group()
+        ballGroup.setPosition(0f, 0f)
+        stage.addActor(ballGroup)
+
+        // Label Group
+        labelGroup = Group()
+        labelGroup.setPosition(0f, 0f)
+        stage.addActor(labelGroup)
+
+
+        // Start Label
+        val freeTypeFontStart = FreeTypeFont("Start !!")
+        freeTypeFontStart.setColor(Color.ORANGE)
+        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.3f, Gdx.graphics.height * 0.9f)
+        labelGroup.addActor(freeTypeFontStart.label)
+
+        // Major Code Label
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + major + "です!")
+        freeTypeFontMajorCode.setColor(Color.RED)
+        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setCenterBottom()
+        labelGroup.addActor(freeTypeFontMajorCode.label)
+
+        // Timer Label
+        freeTypeFontTimer = FreeTypeFont("TIME : $time")
+        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
+        labelGroup.addActor(freeTypeFontTimer.label)
     }
 
     private fun setupTimer() {
@@ -184,7 +204,7 @@ class MyGdxGame : ScreenAdapter() {
                 override fun run() {
                     time -= 1
                     if (time < 0) time = 8
-                    freeTypeFontTimer.setText("TIME : ${time}")
+                    freeTypeFontTimer.setText("TIME : $time")
                 }
             }, 0f, 1f)
         } else if (Gdx.input.isTouched) {
@@ -204,7 +224,7 @@ class MyGdxGame : ScreenAdapter() {
 
         val ball = Ball(x, y, image, name)
 
-        ball.setup(stage)
+        ball.setup(ballGroup)
         balls.add(ball)
     }
 

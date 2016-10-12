@@ -1,7 +1,7 @@
 package com.mygdx.game
 
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -91,14 +91,6 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
     }
 
     /**
-     * ボールをStageに設定する
-     * @param stage Stage
-     */
-    private fun addStage(stage: Stage) {
-        stage.addActor(this.image)
-    }
-
-    /**
      * ボールのイベントを設定する
      */
     private fun addListener() {
@@ -143,12 +135,12 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
 
     /**
      * ボールの設定
-     * @param stage Stage
+     * @param ballGroup Group
      */
-    fun setup(stage: Stage) {
+    fun setup(ballGroup: Group) {
         this.setSize(Ball.SIZE, Ball.SIZE)
         this.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
         this.addListener()
-        this.addStage(stage)
+        ballGroup.addActor(this.image)
     }
 }
