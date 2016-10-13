@@ -8,7 +8,7 @@ import org.robovm.apple.uikit.UIApplication
 class IOSLauncher : IOSApplication.Delegate() {
     override fun createApplication(): IOSApplication {
         val config = IOSApplicationConfiguration()
-        return IOSApplication(MyGdxGame(), config)
+        return IOSApplication(BallGame(), config)
     }
 
     companion object {

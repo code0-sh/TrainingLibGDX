@@ -8,8 +8,11 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Timer
 import java.util.*
 
@@ -35,7 +38,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         Gdx.input.inputProcessor = stage
 
         // Timer
-        setupTimer()
+        createTimer()
 
         // Label
         createLabel()
@@ -83,7 +86,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(20)
-        freeTypeFontMajorCode.setCenterBottom()
+        freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.05f)
         labelGroup.addActor(freeTypeFontMajorCode.label)
 
         // Timer Label
@@ -93,9 +96,9 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     }
 
     /**
-     * Timerの設定
+     * Timerの生成
      */
-    private fun setupTimer() {
+    private fun createTimer() {
         if (!GameState.isOnTimer) {
             GameState.isOnTimer = true
 
@@ -104,10 +107,10 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
                     // Ball
-                    setupBall()
+                    createBall()
 
                     // Body
-                    setupBody()
+                    createBody()
                 }
             }, 0f, 0.45f)
 
@@ -118,7 +121,6 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                         GameState.time = 8
                     }
                     if (GameState.time < 0 && GameState.score != 0) {
-                        println("End")
                         Timer.instance().clear()
                         // 結果画面に遷移する
                         game.screen = ResultScreen(game)
@@ -131,9 +133,9 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     }
 
     /**
-     * ボールの設定
+     * ボールの生成
      */
-    private fun setupBall() {
+    private fun createBall() {
         val random = Random()
         val num = random.nextInt(game.assetManager.ballAtlas.size)
 
@@ -143,15 +145,46 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         val name = num.toString()
 
         val ball = Ball(x, y, image, name)
+        ball.setSize(Ball.SIZE, Ball.SIZE)
+        ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
 
-        ball.setup(ballGroup)
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                println("Ball:No.${ball.name}がクリックされた！")
+                GameState.update(ball.name.toInt())
+                println("GameState.number:" + GameState.number)
+                println("GameState.score:" + GameState.score)
+
+                ballAction(ball)
+            }
+        }
+
+        ball.image.addListener(listener)
+        ballGroup.addActor(image)
         balls.add(ball)
     }
 
     /**
-     * Bodyの設定
+     * ボールのアクション
+     * @param ball ボール
      */
-    private fun setupBody() {
+    private fun ballAction(ball: Ball) {
+        val actionSequence = Actions.sequence()
+        val rotationAction = Actions.rotateBy(Ball.ROTATE, Ball.ROTATE_TIME)
+        val moveByYAction = Actions.moveTo(ball.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val removeActorAction = Actions.removeActor()
+
+        actionSequence.addAction(rotationAction)
+        actionSequence.addAction(moveByYAction)
+        actionSequence.addAction(removeActorAction)
+
+        ball.image.addAction(actionSequence)
+    }
+
+    /**
+     * Bodyの生成
+     */
+    private fun createBody() {
         val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.position.set(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())

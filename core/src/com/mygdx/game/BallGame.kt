@@ -30,6 +30,7 @@ class BallGame : Game() {
 
         assetManager = Assets()
         batch = SpriteBatch()
+
         setScreen(MainScreen(this))
     }
 

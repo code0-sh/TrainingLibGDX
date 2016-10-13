@@ -1,10 +1,6 @@
 package com.mygdx.game
 
-import com.badlogic.gdx.scenes.scene2d.Group
-import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 
 /**
  * ボールのイメージ、初期位置を設定
@@ -24,31 +20,43 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
         /**
          * ボールが反転するまでの時間
          */
-        const val Time_Change_Direction = 0.7f
+        private const val Time_Change_Direction = 0.7f
 
         /**
          * アニメーション
          * ボールが回転する角度(ラジアン)
          */
-        private const val ROTATE = (180 * 8 / Math.PI).toFloat()
+        internal const val ROTATE = (180 * 8 / Math.PI).toFloat()
 
         /**
          * アニメーション
          * ボールの回転時間
          */
-        private const val ROTATE_TIME = 0.3f
+        internal const val ROTATE_TIME = 0.3f
 
         /**
          * アニメーション
          * ボールの上昇距離
          */
-        private const val RISE_DISTANCE = 1500f
+        internal const val RISE_DISTANCE = 1500f
 
         /**
          * アニメーション
          * ボールの上昇時間
          */
-        private const val RISE_TIME = 0.25f
+        internal const val RISE_TIME = 0.25f
+
+        /**
+         * アニメーション
+         * ボールの拡大倍率
+         */
+        internal const val MAGNIFICATION = 2f
+
+        /**
+         * アニメーション
+         * ボールの拡大時間
+         */
+        internal const val MAGNIFICATION_TIME = 1f
     }
 
     /**
@@ -91,59 +99,20 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
     }
 
     /**
-     * ボールのイベントを設定する
-     */
-    private fun addListener() {
-        val ball = this
-        val listener = object: ClickListener() {
-            override fun clicked(event: InputEvent, x:Float, y:Float) {
-                println("Ball:No.${ball.name}がクリックされた！")
-                GameState.update(ball.name.toInt())
-                println("GameState.number:" + GameState.number)
-                println("GameState.score:" + GameState.score)
-
-                // Action
-                val actionSequence = Actions.sequence()
-                val rotationAction = Actions.rotateBy(ROTATE, ROTATE_TIME)
-                val moveByYAction = Actions.moveTo(ball.x, RISE_DISTANCE, RISE_TIME)
-                val removeActorAction = Actions.removeActor()
-
-                actionSequence.addAction(rotationAction)
-                actionSequence.addAction(moveByYAction)
-                actionSequence.addAction(removeActorAction)
-
-                ball.image.addAction(actionSequence)
-            }
-        }
-        ball.image.addListener(listener)
-    }
-
-    /**
      * ボールの位置の更新
      * @param deltaTime 更新間隔
      * @param bodyPositionY 重力加速度による移動距離
      */
     fun update(deltaTime:Float, bodyPositionY: Float) {
-        this.timeStraightDirectionX += deltaTime
-        if (this.timeStraightDirectionX > Ball.Time_Change_Direction) {
-            this.changeDirectionX()
-            this.timeStraightDirectionX = 0f
+        timeStraightDirectionX += deltaTime
+        if (timeStraightDirectionX > Time_Change_Direction) {
+            changeDirectionX()
+            timeStraightDirectionX = 0f
         }
         if (isWallCollided) {
-            this.changeDirectionX()
-            this.isWallCollided = false
+            changeDirectionX()
+            isWallCollided = false
         }
-        this.updatePosition(x + directionX, bodyPositionY)
-    }
-
-    /**
-     * ボールの設定
-     * @param ballGroup Group
-     */
-    fun setup(ballGroup: Group) {
-        this.setSize(Ball.SIZE, Ball.SIZE)
-        this.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
-        this.addListener()
-        ballGroup.addActor(this.image)
+        updatePosition(x + directionX, bodyPositionY)
     }
 }

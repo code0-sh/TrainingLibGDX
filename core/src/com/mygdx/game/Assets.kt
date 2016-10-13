@@ -20,8 +20,8 @@ class Assets {
 
     init {
         assetManager = AssetManager()
-        this.loadResource()
-        this.createBallAtlas()
+        loadResource()
+        createBallAtlas()
     }
 
     /**
@@ -54,7 +54,7 @@ class Assets {
         val ball_ff0064 = atlas.findRegion("ff0064")
         val ball_ffffff = atlas.findRegion("ffffff")
 
-        this.ballAtlas = listOf<TextureAtlas.AtlasRegion>(ball_0000ff,
+        ballAtlas = listOf<TextureAtlas.AtlasRegion>(ball_0000ff,
                 ball_00ff00,
                 ball_00ffff,
                 ball_0300ff,
