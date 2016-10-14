@@ -20,13 +20,13 @@ class BallGame : Game() {
 
         // Camera
         camera = OrthographicCamera()
-        camera.setToOrtho(false, 800f, 480f)
+        camera.setToOrtho(false, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
 
         uiCamera = OrthographicCamera()
-        uiCamera.setToOrtho(false, 800f, 480f)
+        uiCamera.setToOrtho(false, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
 
         // Viewport
-        viewport = FitViewport(800f, 480f, camera)
+        viewport = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), camera)
 
         assets = Assets()
         batch = SpriteBatch()

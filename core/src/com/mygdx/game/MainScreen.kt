@@ -91,7 +91,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         // Major Code Label
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
         freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setFontSize(45)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.05f)
         labelGroup.addActor(freeTypeFontMajorCode.label)
 
@@ -112,13 +112,14 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
             // Timer
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
+                    print("CREATE!!")
                     // Ball
                     createBall()
 
                     // Body
                     createBody()
                 }
-            }, 1f, 0.45f)
+            }, 1f, 2f)
 
             Timer.schedule(object: Timer.Task() {
                 override fun run() {

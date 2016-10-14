@@ -61,7 +61,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      */
     private fun createEndGameButton() {
         val button = Image(game.assets.finishTexture)
-        button.setSize(210f, 103f)
+        button.setSize(420f, 206f)
         val x = (Gdx.graphics.width - button.width) / 2
         val y = Gdx.graphics.height * 0.05f
         button.setPosition(x, y)
@@ -74,7 +74,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     private fun createEndRetryButton() {
         val self = this
         val button = Image(game.assets.retryTexture)
-        button.setSize(195f, 195f)
+        button.setSize(390f, 390f)
         val x = (Gdx.graphics.width - button.width) / 2
         val y = (Gdx.graphics.height - button.height) / 2
         button.setPosition(x, y)
@@ -170,19 +170,19 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         // Major Code Label
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
         freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setFontSize(45)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)
         resultGroup.addActor(freeTypeFontMajorCode.label)
 
         // First Attention Label
         val freeTypeFontFirstAttention = FreeTypeFont("ボールをタップして")
-        freeTypeFontFirstAttention.setFontSize(20)
+        freeTypeFontFirstAttention.setFontSize(45)
         freeTypeFontFirstAttention.setCenterPosition(Gdx.graphics.height * 0.7f)
         resultGroup.addActor(freeTypeFontFirstAttention.label)
 
         // Second Attention Label
         val freeTypeFontSecondAttention = FreeTypeFont("照明の色を変化させろ!︎!")
-        freeTypeFontSecondAttention.setFontSize(20)
+        freeTypeFontSecondAttention.setFontSize(45)
         freeTypeFontSecondAttention.setCenterPosition(Gdx.graphics.height * 0.65f)
         resultGroup.addActor(freeTypeFontSecondAttention.label)
     }

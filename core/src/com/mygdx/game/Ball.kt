@@ -15,7 +15,7 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
         /**
          * ボールのサイズ
          */
-        internal const val SIZE = 50f
+        internal const val SIZE = 175f
 
         /**
          * ボールが反転するまでの時間
