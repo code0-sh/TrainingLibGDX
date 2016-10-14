@@ -1,6 +1,7 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
 
@@ -11,17 +12,35 @@ class Assets {
     lateinit var ballAtlas: List<TextureAtlas.AtlasRegion>
     private set
 
+    var finishTexture: Texture
+    private set
+
+    var retryTexture: Texture
+    private set
+
     companion object {
         /**
          * ボールのテクスチャアトラスファイル
          */
         private const val BALLS_RESOURCE = "balls.txt"
+
+        /**
+         * 「GAMEを終了」画像
+         */
+        private const val Finish_RESOURCE = "finish.png"
+
+        /**
+         * 「もう一度遊ぶ」画像
+         */
+        private const val Retry_RESOURCE = "retry.png"
     }
 
     init {
         assetManager = AssetManager()
         loadResource()
         createBallAtlas()
+        finishTexture = assetManager.get(Finish_RESOURCE, Texture::class.java)
+        retryTexture = assetManager.get(Retry_RESOURCE, Texture::class.java)
     }
 
     /**
@@ -36,6 +55,8 @@ class Assets {
      */
     private fun loadResource() {
         assetManager.load(BALLS_RESOURCE, TextureAtlas::class.java)
+        assetManager.load(Finish_RESOURCE, Texture::class.java)
+        assetManager.load(Retry_RESOURCE, Texture::class.java)
         assetManager.finishLoading()
     }
 

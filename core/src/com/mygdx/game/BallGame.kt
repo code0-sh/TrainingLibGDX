@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 
 class BallGame : Game() {
     lateinit var batch: SpriteBatch
-    lateinit var assetManager: Assets
+    lateinit var assets: Assets
     lateinit var camera: OrthographicCamera
     lateinit var uiCamera: OrthographicCamera
     lateinit var viewport: Viewport
@@ -28,7 +28,7 @@ class BallGame : Game() {
         // Viewport
         viewport = FitViewport(800f, 480f, camera)
 
-        assetManager = Assets()
+        assets = Assets()
         batch = SpriteBatch()
 
         setScreen(MainScreen(this))
@@ -56,6 +56,6 @@ class BallGame : Game() {
     override fun dispose() {
         println("BallGame dispose")
         batch.dispose()
-        assetManager.dispose()
+        assets.dispose()
     }
 }

@@ -137,11 +137,11 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
      */
     private fun createBall() {
         val random = Random()
-        val num = random.nextInt(game.assetManager.ballAtlas.size)
+        val num = random.nextInt(game.assets.ballAtlas.size)
 
         val x = random.nextFloat() * (Gdx.graphics.width - Ball.SIZE)
         val y = Gdx.graphics.height.toFloat() - Ball.SIZE
-        val image = Image(game.assetManager.ballAtlas[num])
+        val image = Image(game.assets.ballAtlas[num])
         val name = num.toString()
 
         val ball = Ball(x, y, image, name)
