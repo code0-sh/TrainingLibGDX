@@ -28,6 +28,8 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     internal val game: BallGame
 
     init {
+        println("MainScreen init")
+
         this.game = game
 
         // World
@@ -37,14 +39,14 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         stage = Stage()
         Gdx.input.inputProcessor = stage
 
+        // GameState
+        GameState.initGameSate()
+
         // Timer
         createTimer()
 
         // Label
         createLabel()
-
-        // GameState
-        GameState.initGameSate()
     }
 
     override fun render(delta: Float) {
@@ -54,6 +56,10 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
 
         stage.act(Gdx.graphics.deltaTime)
         stage.draw()
+    }
+
+    override fun show() {
+        println("MainScreen show")
     }
 
     override fun dispose() {
@@ -112,7 +118,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                     // Body
                     createBody()
                 }
-            }, 0f, 0.45f)
+            }, 1f, 0.45f)
 
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
@@ -128,7 +134,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                     }
                     freeTypeFontTimer.setText("TIME : ${GameState.time}")
                 }
-            }, 0f, 1f)
+            }, 1f, 1f)
         }
     }
 

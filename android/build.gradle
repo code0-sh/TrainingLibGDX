@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
     compileSdkVersion 24
     sourceSets {
         main {
@@ -17,7 +17,7 @@ android {
     }
     defaultConfig {
         applicationId "com.mygdx.game"
-        minSdkVersion 8
+        minSdkVersion 16
         targetSdkVersion 24
     }
 }
@@ -131,4 +131,6 @@ repositories {
 }
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile 'com.google.android:support-v4:r7'
+    compile 'com.android.support:support-v4:24.2.1'
 }

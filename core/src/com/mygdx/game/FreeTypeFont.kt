@@ -15,7 +15,7 @@ class FreeTypeFont(text: String) {
     private var fontSize = 25
     private var fontColor = Color.WHITE
     private lateinit var labelStyle: Label.LabelStyle
-    var label: Label
+    internal var label: Label
 
     init {
         setLabelStyle()

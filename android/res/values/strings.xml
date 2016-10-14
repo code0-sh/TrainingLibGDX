@@ -3,4 +3,8 @@
 
     <string name="app_name">my-gdx-game</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="next_button_label">Start Game</string>
+
 </resources>

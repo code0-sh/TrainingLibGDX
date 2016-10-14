@@ -53,6 +53,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
 
     override fun dispose() {
         println("ResultScreen dispose")
+        stage.dispose()
     }
 
     /**
@@ -71,11 +72,22 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      * 「もう一度遊ぶ」ボタンの生成
      */
     private fun createEndRetryButton() {
+        val self = this
         val button = Image(game.assets.retryTexture)
         button.setSize(195f, 195f)
         val x = (Gdx.graphics.width - button.width) / 2
         val y = (Gdx.graphics.height - button.height) / 2
         button.setPosition(x, y)
+
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                // Main画面に遷移する
+                game.screen = MainScreen(game)
+                self.dispose()
+            }
+        }
+        button.addListener(listener)
+
         endGroup.addActor(button)
     }
 
@@ -156,7 +168,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      */
     private fun createResultLabel() {
         // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(20)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)
