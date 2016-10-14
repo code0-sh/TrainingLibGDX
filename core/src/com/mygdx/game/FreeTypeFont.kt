@@ -53,12 +53,13 @@ class FreeTypeFont(text: String) {
 
     /**
      * labelの位置を画面下中央に設定
+     * @param bottom 画面下部からの距離
      */
-    fun setCenterBottom() {
+    fun setCenterPosition(bottom: Float) {
         val font = createFont(fontSize)
         val layout = GlyphLayout(font, label.text)
         val fontX = (Gdx.graphics.width - layout.width) / 2
-        val fontY = Gdx.graphics.height * 0.05f
+        val fontY = bottom
         label.setPosition(fontX, fontY)
     }
 
@@ -79,7 +80,7 @@ class FreeTypeFont(text: String) {
         val generator = FreeTypeFontGenerator(Gdx.files.internal("font/" + "GenEiGothicM-Regular.ttf"))
         val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
         parameter.size = fontSize
-        parameter.characters = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!1234567890現在ライトアップエリアで: "
+        parameter.characters = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!-1234567890現在ライトアップエリアでボールタップ照明色変化: "
         return generator.generateFont(parameter)
     }
 

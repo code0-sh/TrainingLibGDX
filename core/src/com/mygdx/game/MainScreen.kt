@@ -1,136 +1,44 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Timer
-import com.badlogic.gdx.utils.viewport.FitViewport
-import com.badlogic.gdx.utils.viewport.Viewport
 import java.util.*
 
-class MyGdxGame : ScreenAdapter() {
-    private lateinit var assetManager: Assets
+class MainScreen(game: BallGame) : ScreenAdapter() {
     private var balls: MutableList<Ball> = mutableListOf()
-    private lateinit var camera: OrthographicCamera
-    private lateinit var world: World
+    private var world: World
     private lateinit var body: Body
     private var bodys: MutableList<Body> = mutableListOf()
-//    private val scale = 0.5f
-    private lateinit var stage: Stage
-    private lateinit var viewport: Viewport
-
-    private lateinit var bgImg: Texture
-    private lateinit var bg: Sprite
-    private lateinit var batch: SpriteBatch
-    private lateinit var shapeRenderer: ShapeRenderer
-    private lateinit var font: BitmapFont
-    private lateinit var uiCamera: OrthographicCamera
+    private var stage: Stage
     private lateinit var freeTypeFontTimer: FreeTypeFont
     private lateinit var labelGroup: Group
     private lateinit var ballGroup: Group
+    internal val game: BallGame
 
-    override fun render(delta: Float) {
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            camera.position.x -= 2
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            camera.position.x += 2
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            camera.position.y += 2
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            camera.position.y -= 2
-        }
-
-        // カメラの座標の文字列を作って
-        val info = String.format("cam pos(%f,%f)", camera.position.x, camera.position.y)
-        //val info = "アイウエオ"
-
-        // tell the camera to update its matrices.
-        camera.update()
-        batch.projectionMatrix = camera.combined
-
-        uiCamera.update()
-        batch.projectionMatrix = uiCamera.combined
-
-        // Advance the world, by the amount of time that has elapsed since the last frame
-        // Generally in a real game, dont do this in the render loop, as you are tying the physics
-        // update rate to the frame rate, and vice versa
-        world.step(Gdx.graphics.deltaTime, 6, 2)
-
-        update(delta)
-
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
-        batch.begin()
-        bg.draw(batch)
-        font.draw(batch, info, 0f, 20f)
-        batch.end()
-
-        // ワールド座標軸を描画する。
-        shapeRenderer.projectionMatrix = camera.combined
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
-        shapeRenderer.setColor(1f, 0f, 0f, 1f)
-        shapeRenderer.line(-1024f, 0f, 1024f, 0f)
-        shapeRenderer.setColor(0f, 1f, 0f, 1f)
-        shapeRenderer.line(0f, -1024f, 0f, 1024f)
-        shapeRenderer.end()
-
-        stage.act(Gdx.graphics.deltaTime)
-        stage.draw()
-    }
-
-    override fun show() {
-        // Resource
-        assetManager = Assets()
+    init {
+        this.game = game
 
         // World
         world = World(Vector2(0f, GameState.gravity), true)
-
-        batch = SpriteBatch()
-        bgImg = Texture("bg.png")
-        bg = Sprite(bgImg)
-        bg.setScale(2.0f, 2.0f)
-        bg.setPosition(0f, 0f)
-
-        shapeRenderer = ShapeRenderer()
-
-        font = BitmapFont()
-
-        // Camera
-        camera = OrthographicCamera(800f, 480f)
-        camera.setToOrtho(false, 800f, 480f)
-
-        uiCamera = OrthographicCamera()
-        uiCamera.setToOrtho(false, 800f, 480f)
-
-        // Viewport
-        viewport = FitViewport(800f, 480f, camera)
 
         // Stage
         stage = Stage()
         Gdx.input.inputProcessor = stage
 
         // Timer
-        setupTimer()
+        createTimer()
 
         // Label
         createLabel()
@@ -139,14 +47,19 @@ class MyGdxGame : ScreenAdapter() {
         GameState.initGameSate()
     }
 
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+    override fun render(delta: Float) {
+        world.step(Gdx.graphics.deltaTime, 6, 2)
+
+        update(delta)
+
+        stage.act(Gdx.graphics.deltaTime)
+        stage.draw()
     }
 
     override fun dispose() {
-        Assets.dispose()
-        bgImg.dispose()
-        font.dispose()
+        println("MainScreen dispose")
+        stage.dispose()
+        world.dispose()
     }
 
     /**
@@ -163,7 +76,6 @@ class MyGdxGame : ScreenAdapter() {
         labelGroup.setPosition(0f, 0f)
         stage.addActor(labelGroup)
 
-
         // Start Label
         val freeTypeFontStart = FreeTypeFont("Start !!")
         freeTypeFontStart.setColor(Color.ORANGE)
@@ -174,7 +86,7 @@ class MyGdxGame : ScreenAdapter() {
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(20)
-        freeTypeFontMajorCode.setCenterBottom()
+        freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.05f)
         labelGroup.addActor(freeTypeFontMajorCode.label)
 
         // Timer Label
@@ -184,19 +96,21 @@ class MyGdxGame : ScreenAdapter() {
     }
 
     /**
-     * Timerの設定
+     * Timerの生成
      */
-    private fun setupTimer() {
+    private fun createTimer() {
         if (!GameState.isOnTimer) {
             GameState.isOnTimer = true
+
+            val self = this
             // Timer
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
                     // Ball
-                    setupBall()
+                    createBall()
 
                     // Body
-                    setupBody()
+                    createBody()
                 }
             }, 0f, 0.45f)
 
@@ -207,9 +121,10 @@ class MyGdxGame : ScreenAdapter() {
                         GameState.time = 8
                     }
                     if (GameState.time < 0 && GameState.score != 0) {
-                        println("End")
                         Timer.instance().clear()
-                        return
+                        // 結果画面に遷移する
+                        game.screen = ResultScreen(game)
+                        self.dispose()
                     }
                     freeTypeFontTimer.setText("TIME : ${GameState.time}")
                 }
@@ -217,22 +132,59 @@ class MyGdxGame : ScreenAdapter() {
         }
     }
 
-    private fun setupBall() {
+    /**
+     * ボールの生成
+     */
+    private fun createBall() {
         val random = Random()
-        val num = random.nextInt(assetManager.ballAtlas.size)
+        val num = random.nextInt(game.assetManager.ballAtlas.size)
 
         val x = random.nextFloat() * (Gdx.graphics.width - Ball.SIZE)
         val y = Gdx.graphics.height.toFloat() - Ball.SIZE
-        val image = Image(assetManager.ballAtlas[num])
+        val image = Image(game.assetManager.ballAtlas[num])
         val name = num.toString()
 
         val ball = Ball(x, y, image, name)
+        ball.setSize(Ball.SIZE, Ball.SIZE)
+        ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
 
-        ball.setup(ballGroup)
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                println("Ball:No.${ball.name}がクリックされた！")
+                GameState.update(ball.name.toInt())
+                println("GameState.number:" + GameState.number)
+                println("GameState.score:" + GameState.score)
+
+                ballAction(ball)
+            }
+        }
+
+        ball.image.addListener(listener)
+        ballGroup.addActor(image)
         balls.add(ball)
     }
 
-    private fun setupBody() {
+    /**
+     * ボールのアクション
+     * @param ball ボール
+     */
+    private fun ballAction(ball: Ball) {
+        val actionSequence = Actions.sequence()
+        val rotationAction = Actions.rotateBy(Ball.ROTATE, Ball.ROTATE_TIME)
+        val moveByYAction = Actions.moveTo(ball.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val removeActorAction = Actions.removeActor()
+
+        actionSequence.addAction(rotationAction)
+        actionSequence.addAction(moveByYAction)
+        actionSequence.addAction(removeActorAction)
+
+        ball.image.addAction(actionSequence)
+    }
+
+    /**
+     * Bodyの生成
+     */
+    private fun createBody() {
         val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.position.set(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
@@ -259,7 +211,6 @@ class MyGdxGame : ScreenAdapter() {
             }
         }
 
-
         balls.toList().forEach {
             if (it.isOffScreen) {
                 balls.remove(it)
@@ -274,6 +225,7 @@ class MyGdxGame : ScreenAdapter() {
         }
 
         for (index in balls.indices) {
+            // ボールの位置の更新
             balls[index].update(delta, bodys[index].position.y)
         }
     }

@@ -26,7 +26,7 @@ object GameState {
 
     /**
      * スコアと名前の更新
-     * @param index
+     * @param index 選択されたボールの番号
      */
     fun update(index: Int) {
         scores[index] += 1

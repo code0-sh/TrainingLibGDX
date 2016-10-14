@@ -24,38 +24,6 @@ open class GameObject(x:Float, y:Float, image:Image) {
     }
 
     /**
-     * このオブジェクトの左頂点値を返却
-     * @return 左頂点の値
-     */
-    fun getLeft(): Float {
-        return x
-    }
-
-    /**
-     * このオブジェクトの右頂点値を返却
-     * @return 右頂点の値
-     */
-    fun getRight(): Float {
-        return x + image.width
-    }
-
-    /**
-     * このオブジェクトの上頂点値を返却
-     * @return 上頂点の値
-     */
-    fun getUp(): Float {
-        return y + image.height
-    }
-
-    /**
-     * このオブジェクトの下頂点値を返却
-     * @return 下頂点の値
-     */
-    fun getDown(): Float {
-        return y
-    }
-
-    /**
      * オブジェクトの大きさを設定
      */
     fun setSize(x:Float, y:Float) {
