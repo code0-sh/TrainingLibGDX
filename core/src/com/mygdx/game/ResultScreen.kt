@@ -103,6 +103,8 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         val ball = Ball(x, y, image, name)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
+        println("ball.position.x:${ball.position.x}")
+        println("ball.position.y:${ball.position.y}")
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
@@ -121,7 +123,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     private fun resultBallAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val scaleAction = Actions.scaleTo(Ball.MAGNIFICATION, Ball.MAGNIFICATION, Ball.MAGNIFICATION_TIME)
-        val moveByYAction = Actions.moveTo(ball.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(scaleAction)
@@ -170,19 +172,19 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         // Major Code Label
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
         freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(45)
+        freeTypeFontMajorCode.setFontSize(35)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)
         resultGroup.addActor(freeTypeFontMajorCode.label)
 
         // First Attention Label
         val freeTypeFontFirstAttention = FreeTypeFont("ボールをタップして")
-        freeTypeFontFirstAttention.setFontSize(45)
+        freeTypeFontFirstAttention.setFontSize(35)
         freeTypeFontFirstAttention.setCenterPosition(Gdx.graphics.height * 0.7f)
         resultGroup.addActor(freeTypeFontFirstAttention.label)
 
         // Second Attention Label
         val freeTypeFontSecondAttention = FreeTypeFont("照明の色を変化させろ!︎!")
-        freeTypeFontSecondAttention.setFontSize(45)
+        freeTypeFontSecondAttention.setFontSize(35)
         freeTypeFontSecondAttention.setCenterPosition(Gdx.graphics.height * 0.65f)
         resultGroup.addActor(freeTypeFontSecondAttention.label)
     }

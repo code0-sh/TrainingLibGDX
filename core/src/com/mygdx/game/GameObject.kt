@@ -1,5 +1,6 @@
 package com.mygdx.game
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 
 /**
@@ -9,18 +10,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
  * @param image このオブジェクトのイメージ
  */
 open class GameObject(x:Float, y:Float, image:Image) {
+    var position: Vector2
+    protected set
+
     var image: Image
     protected set
 
-    var x = 0f
-    protected set
-
-    var y = 0f
-    protected set
-
     init {
+        this.position = Vector2(x, y)
         this.image = image
-        updatePosition(x, y)
     }
 
     /**
@@ -35,16 +33,5 @@ open class GameObject(x:Float, y:Float, image:Image) {
      */
     fun setOrigin(x:Float, y:Float) {
         image.setOrigin(x, y)
-    }
-
-    /**
-     * オブジェクトの位置の更新
-     * @param x 移動後のX座標
-     * @param y 移動後のY座標
-     */
-    fun updatePosition(x:Float, y:Float) {
-        this.x = x
-        this.y = y
-        image.setPosition(this.x, this.y)
     }
 }
