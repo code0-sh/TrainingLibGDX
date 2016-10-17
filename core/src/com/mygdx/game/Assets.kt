@@ -66,22 +66,22 @@ class Assets {
     private fun createBallAtlas() {
         val atlas = assetManager.get(BALLS_RESOURCE, TextureAtlas::class.java)
 
-        val ball_0000ff = atlas.findRegion("0000ff")
-        val ball_00ff00 = atlas.findRegion("00ff00")
-        val ball_00ffff = atlas.findRegion("00ffff")
-        val ball_0300ff = atlas.findRegion("0300ff")
-        val ball_3200ff = atlas.findRegion("3200ff")
-        val ball_ff0000 = atlas.findRegion("ff0000")
-        val ball_ff0064 = atlas.findRegion("ff0064")
-        val ball_ffffff = atlas.findRegion("ffffff")
+        val ball_blue = atlas.findRegion("blue")
+        val ball_lime = atlas.findRegion("lime")
+        val ball_cyan = atlas.findRegion("cyan")
+        val ball_purple = atlas.findRegion("purple")
+        val ball_yellow = atlas.findRegion("yellow")
+        val ball_red = atlas.findRegion("red")
+        val ball_pink = atlas.findRegion("pink")
+        val ball_white = atlas.findRegion("white")
 
-        ballAtlas = listOf<TextureAtlas.AtlasRegion>(ball_0000ff,
-                ball_00ff00,
-                ball_00ffff,
-                ball_0300ff,
-                ball_3200ff,
-                ball_ff0000,
-                ball_ff0064,
-                ball_ffffff)
+        ballAtlas = listOf<TextureAtlas.AtlasRegion>(ball_blue,
+                ball_lime,
+                ball_cyan,
+                ball_purple,
+                ball_yellow,
+                ball_red,
+                ball_pink,
+                ball_white)
     }
 }

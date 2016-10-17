@@ -1,5 +1,6 @@
 package com.mygdx.game
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 
 /**
@@ -9,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
  * @param image ボールのイメージ
  */
 
-class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, image) {
+class Ball(x:Float, y:Float, image: Image, name: String) : DynamicGameObject(x, y, image) {
 
     companion object {
         /**
@@ -75,9 +76,9 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
     var isWallCollided = false
 
     init {
-        this.x = x
-        this.y = y
+        this.position = Vector2(x ,y)
         this.image = image
+        this.image.setPosition(x, y)
         this.name = name
     }
 
@@ -101,9 +102,8 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
     /**
      * ボールの位置の更新
      * @param deltaTime 更新間隔
-     * @param bodyPositionY 重力加速度による移動距離
      */
-    fun update(deltaTime:Float, bodyPositionY: Float) {
+    fun update(deltaTime:Float) {
         timeStraightDirectionX += deltaTime
         if (timeStraightDirectionX > Time_Change_Direction) {
             changeDirectionX()
@@ -113,6 +113,9 @@ class Ball(x:Float, y:Float, image: Image, name: String) : GameObject(x, y, imag
             changeDirectionX()
             isWallCollided = false
         }
-        updatePosition(x + directionX, bodyPositionY)
+
+        velocity.add(0f, GameState.gravity.y * deltaTime)
+        position.add(directionX, velocity.y * deltaTime)
+        this.image.setPosition(position.x, position.y)
     }
 }
