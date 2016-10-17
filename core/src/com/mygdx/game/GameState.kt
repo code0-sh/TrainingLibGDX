@@ -1,5 +1,7 @@
 package com.mygdx.game
 
+import com.badlogic.gdx.math.Vector2
+
 object GameState {
     private var scores: MutableList<Int> = mutableListOf()
     internal var score = 0
@@ -7,7 +9,7 @@ object GameState {
     internal var major = -1
     internal var time = 8
     internal var isOnTimer = false
-    internal const val gravity = -98f
+    internal val gravity = Vector2(0f, -98f)
 
     /**
      * ゲーム状態の初期化

@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
     compileSdkVersion 24
     sourceSets {
         main {
@@ -17,7 +17,7 @@ android {
     }
     defaultConfig {
         applicationId "com.mygdx.game"
-        minSdkVersion 8
+        minSdkVersion 16
         targetSdkVersion 24
     }
 }
@@ -130,5 +130,17 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.altbeacon:android-beacon-library:2.9.1"
+    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
 }

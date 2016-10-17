@@ -12,10 +12,10 @@ class FreeTypeFont(text: String) {
 
     private var x: Float = 0f
     private var y: Float = 0f
-    private var fontSize = 25
+    private var fontSize = 45
     private var fontColor = Color.WHITE
     private lateinit var labelStyle: Label.LabelStyle
-    var label: Label
+    internal var label: Label
 
     init {
         setLabelStyle()

@@ -3,10 +3,6 @@ package com.mygdx.game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -18,9 +14,6 @@ import java.util.*
 
 class MainScreen(game: BallGame) : ScreenAdapter() {
     private var balls: MutableList<Ball> = mutableListOf()
-    private var world: World
-    private lateinit var body: Body
-    private var bodys: MutableList<Body> = mutableListOf()
     private var stage: Stage
     private lateinit var freeTypeFontTimer: FreeTypeFont
     private lateinit var labelGroup: Group
@@ -28,38 +21,38 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     internal val game: BallGame
 
     init {
-        this.game = game
+        println("MainScreen init")
 
-        // World
-        world = World(Vector2(0f, GameState.gravity), true)
+        this.game = game
 
         // Stage
         stage = Stage()
         Gdx.input.inputProcessor = stage
+
+        // GameState
+        GameState.initGameSate()
 
         // Timer
         createTimer()
 
         // Label
         createLabel()
-
-        // GameState
-        GameState.initGameSate()
     }
 
     override fun render(delta: Float) {
-        world.step(Gdx.graphics.deltaTime, 6, 2)
-
         update(delta)
 
         stage.act(Gdx.graphics.deltaTime)
         stage.draw()
     }
 
+    override fun show() {
+        println("MainScreen show")
+    }
+
     override fun dispose() {
         println("MainScreen dispose")
         stage.dispose()
-        world.dispose()
     }
 
     /**
@@ -79,19 +72,19 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
         // Start Label
         val freeTypeFontStart = FreeTypeFont("Start !!")
         freeTypeFontStart.setColor(Color.ORANGE)
-        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.3f, Gdx.graphics.height * 0.9f)
+        freeTypeFontStart.setPosition(Gdx.graphics.width * 0.1f, Gdx.graphics.height * 0.9f)
         labelGroup.addActor(freeTypeFontStart.label)
 
         // Major Code Label
         val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
         freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setFontSize(35)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.05f)
         labelGroup.addActor(freeTypeFontMajorCode.label)
 
         // Timer Label
         freeTypeFontTimer = FreeTypeFont("TIME : ${GameState.time}")
-        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.55f, Gdx.graphics.height * 0.9f)
+        freeTypeFontTimer.setPosition(Gdx.graphics.width * 0.65f, Gdx.graphics.height * 0.9f)
         labelGroup.addActor(freeTypeFontTimer.label)
     }
 
@@ -108,11 +101,8 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                 override fun run() {
                     // Ball
                     createBall()
-
-                    // Body
-                    createBody()
                 }
-            }, 0f, 0.45f)
+            }, 1f, 0.45f)
 
             Timer.schedule(object: Timer.Task() {
                 override fun run() {
@@ -128,7 +118,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                     }
                     freeTypeFontTimer.setText("TIME : ${GameState.time}")
                 }
-            }, 0f, 1f)
+            }, 1f, 1f)
         }
     }
 
@@ -137,16 +127,17 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
      */
     private fun createBall() {
         val random = Random()
-        val num = random.nextInt(game.assetManager.ballAtlas.size)
+        val num = random.nextInt(game.assets.ballAtlas.size)
 
         val x = random.nextFloat() * (Gdx.graphics.width - Ball.SIZE)
-        val y = Gdx.graphics.height.toFloat() - Ball.SIZE
-        val image = Image(game.assetManager.ballAtlas[num])
+        val y = Gdx.graphics.height.toFloat()
+        val image = Image(game.assets.ballAtlas[num])
         val name = num.toString()
 
         val ball = Ball(x, y, image, name)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
+        ball.velocity.add(0f, -250f)
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
@@ -171,7 +162,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     private fun ballAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val rotationAction = Actions.rotateBy(Ball.ROTATE, Ball.ROTATE_TIME)
-        val moveByYAction = Actions.moveTo(ball.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(rotationAction)
@@ -182,31 +173,17 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     }
 
     /**
-     * Bodyの生成
-     */
-    private fun createBody() {
-        val bodyDef = BodyDef()
-        bodyDef.type = BodyDef.BodyType.DynamicBody
-        bodyDef.position.set(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        body = world.createBody(bodyDef)
-        body.isActive = true
-        bodys.add(body)
-    }
-
-    /**
      * 更新
      * @param delta 更新間隔
      */
     private fun update(delta:Float) {
         for ( index in balls.indices) {
             // 地面と衝突
-            if (balls[index].y + Ball.SIZE < 0 ) {
+            if (balls[index].position.y + Ball.SIZE < 0 ) {
                 balls[index].isOffScreen = true
-                bodys[index].isActive = false
             }
             // 壁と衝突
-            if (balls[index].x < 0 || Gdx.graphics.width - Ball.SIZE < balls[index].x) {
-                //println("壁と衝突")
+            if (balls[index].position.x < 0 || Gdx.graphics.width - Ball.SIZE < balls[index].position.x) {
                 balls[index].isWallCollided = true
             }
         }
@@ -218,15 +195,9 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
             }
         }
 
-        bodys.toList().forEach {
-            if (!it.isActive) {
-                bodys.remove(it)
-            }
-        }
-
         for (index in balls.indices) {
             // ボールの位置の更新
-            balls[index].update(delta, bodys[index].position.y)
+            balls[index].update(delta)
         }
     }
 }

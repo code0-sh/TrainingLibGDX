@@ -14,6 +14,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     internal val game: BallGame
     private var stage: Stage
     private var resultGroup: Group
+    private var endGroup: Group
 
     init {
         this.game = game
@@ -27,11 +28,22 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         resultGroup.setPosition(0f, 0f)
         stage.addActor(resultGroup)
 
-        // Ball
-        createBall()
+        // End Group
+        endGroup = Group()
+        endGroup.setPosition(0f, -Gdx.graphics.height.toFloat())
+        stage.addActor(endGroup)
 
-        // Label
+        // Result Ball
+        createResultBall()
+
+        // Result Label
         createResultLabel()
+
+        // End Game Button
+        createEndGameButton()
+
+        // End Retry Button
+        createEndRetryButton()
     }
 
     override fun render(delta: Float) {
@@ -41,24 +53,62 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
 
     override fun dispose() {
         println("ResultScreen dispose")
+        stage.dispose()
+    }
+
+    /**
+     * 「GAMEを終了」ボタンの生成
+     */
+    private fun createEndGameButton() {
+        val button = Image(game.assets.finishTexture)
+        button.setSize(420f, 206f)
+        val x = (Gdx.graphics.width - button.width) / 2
+        val y = Gdx.graphics.height * 0.05f
+        button.setPosition(x, y)
+        endGroup.addActor(button)
+    }
+
+    /**
+     * 「もう一度遊ぶ」ボタンの生成
+     */
+    private fun createEndRetryButton() {
+        val self = this
+        val button = Image(game.assets.retryTexture)
+        button.setSize(390f, 390f)
+        val x = (Gdx.graphics.width - button.width) / 2
+        val y = (Gdx.graphics.height - button.height) / 2
+        button.setPosition(x, y)
+
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                // Main画面に遷移する
+                game.screen = MainScreen(game)
+                self.dispose()
+            }
+        }
+        button.addListener(listener)
+
+        endGroup.addActor(button)
     }
 
     /**
      * ボールの生成
      */
-    private fun createBall() {
+    private fun createResultBall() {
         val x = (Gdx.graphics.width - Ball.SIZE) / 2
         val y = (Gdx.graphics.height - Ball.SIZE) / 2
-        val image = Image(game.assetManager.ballAtlas[GameState.number])
+        val image = Image(game.assets.ballAtlas[GameState.number])
         val name = GameState.number.toString()
 
         val ball = Ball(x, y, image, name)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
+        println("ball.position.x:${ball.position.x}")
+        println("ball.position.y:${ball.position.y}")
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
-                ballAction(ball)
+                resultBallAction(ball)
             }
         }
 
@@ -70,10 +120,10 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      * ボールのアクション
      * @param ball ボール
      */
-    private fun ballAction(ball: Ball) {
+    private fun resultBallAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val scaleAction = Actions.scaleTo(Ball.MAGNIFICATION, Ball.MAGNIFICATION, Ball.MAGNIFICATION_TIME)
-        val moveByYAction = Actions.moveTo(ball.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(scaleAction)
@@ -87,7 +137,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     }
 
     /**
-     * resultGroupのアクション
+     * 結果Groupのアクション
      */
     private fun resultGroupAction() {
         val actionSequence = Actions.sequence()
@@ -97,29 +147,44 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         actionSequence.addAction(delayAction)
         actionSequence.addAction(moveByYAction)
         actionSequence.addAction(removeActorAction)
+        actionSequence.run {
+            endGroupAction()
+        }
         resultGroup.addAction(actionSequence)
     }
 
     /**
-     * ラベルの生成
+     * 終了Groupのアクション
+     */
+    private fun endGroupAction() {
+        val actionSequence = Actions.sequence()
+        val delayAction = Actions.delay(Ball.MAGNIFICATION_TIME + Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(endGroup.x, 0f, Ball.RISE_TIME)
+        actionSequence.addAction(delayAction)
+        actionSequence.addAction(moveByYAction)
+        endGroup.addAction(actionSequence)
+    }
+
+    /**
+     * 結果ラベルの生成
      */
     private fun createResultLabel() {
         // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!")
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
         freeTypeFontMajorCode.setColor(Color.RED)
-        freeTypeFontMajorCode.setFontSize(20)
+        freeTypeFontMajorCode.setFontSize(35)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)
         resultGroup.addActor(freeTypeFontMajorCode.label)
 
         // First Attention Label
         val freeTypeFontFirstAttention = FreeTypeFont("ボールをタップして")
-        freeTypeFontFirstAttention.setFontSize(20)
+        freeTypeFontFirstAttention.setFontSize(35)
         freeTypeFontFirstAttention.setCenterPosition(Gdx.graphics.height * 0.7f)
         resultGroup.addActor(freeTypeFontFirstAttention.label)
 
         // Second Attention Label
         val freeTypeFontSecondAttention = FreeTypeFont("照明の色を変化させろ!︎!")
-        freeTypeFontSecondAttention.setFontSize(20)
+        freeTypeFontSecondAttention.setFontSize(35)
         freeTypeFontSecondAttention.setCenterPosition(Gdx.graphics.height * 0.65f)
         resultGroup.addActor(freeTypeFontSecondAttention.label)
     }
