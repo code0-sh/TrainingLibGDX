@@ -1,60 +1,60 @@
 balls.png
-size: 1400, 175
+size: 1416, 177
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-0000ff
+blue
   rotate: false
-  xy: 0, 0
+  xy: 1, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-00ff00
+lime
   rotate: false
-  xy: 175, 0
+  xy: 178, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-00ffff
+cyan
   rotate: false
-  xy: 350, 0
+  xy: 355, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-0300ff
+purple
   rotate: false
-  xy: 525, 0
+  xy: 532, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-3200ff
+yellow
   rotate: false
-  xy: 700, 0
+  xy: 709, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-ff0000
+red
   rotate: false
-  xy: 875, 0
+  xy: 886, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-ff0064
+pink
   rotate: false
-  xy: 1050, 0
+  xy: 1063, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0
   index: -1
-ffffff
+white
   rotate: false
-  xy: 1225, 0
+  xy: 1240, 1
   size: 175, 175
   orig: 175, 175
   offset: 0, 0

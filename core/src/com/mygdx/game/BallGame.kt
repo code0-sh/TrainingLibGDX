@@ -8,15 +8,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 
-class BallGame : Game() {
+class BallGame(endGame: EndGame) : Game() {
     lateinit var batch: SpriteBatch
     lateinit var assets: Assets
     lateinit var camera: OrthographicCamera
     lateinit var uiCamera: OrthographicCamera
     lateinit var viewport: Viewport
 
+    lateinit var endGame_: EndGame
+
+    init {
+        this.endGame_ = endGame
+    }
+
     override fun create() {
         println("BallGame create")
+
+
 
         // Camera
         camera = OrthographicCamera()

@@ -17,6 +17,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     private var endGroup: Group
 
     init {
+        println("ResultScreen init")
         this.game = game
 
         // Stage
@@ -60,11 +61,23 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      * 「GAMEを終了」ボタンの生成
      */
     private fun createEndGameButton() {
+        val self = this
         val button = Image(game.assets.finishTexture)
         button.setSize(420f, 206f)
         val x = (Gdx.graphics.width - button.width) / 2
         val y = Gdx.graphics.height * 0.05f
         button.setPosition(x, y)
+
+        val listener = object: ClickListener() {
+            override fun clicked(event: InputEvent, x:Float, y:Float) {
+                // Top画面に遷移する
+                println("GAMEを終了")
+                game.endGame_.returnToTop()
+                self.dispose()
+            }
+        }
+        button.addListener(listener)
+
         endGroup.addActor(button)
     }
 
