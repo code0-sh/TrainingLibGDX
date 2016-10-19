@@ -7,15 +7,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import java.lang.ref.WeakReference
 
-class BallGame(endGame: EndGame) : Game() {
+class BallGame(endGame: WeakReference<EndGame>) : Game() {
     lateinit var batch: SpriteBatch
     lateinit var assets: Assets
     lateinit var camera: OrthographicCamera
     lateinit var uiCamera: OrthographicCamera
     lateinit var viewport: Viewport
 
-    lateinit var endGame_: EndGame
+    internal var endGame_: WeakReference<EndGame>
 
     init {
         this.endGame_ = endGame
@@ -23,8 +24,6 @@ class BallGame(endGame: EndGame) : Game() {
 
     override fun create() {
         println("BallGame create")
-
-
 
         // Camera
         camera = OrthographicCamera()
@@ -39,7 +38,7 @@ class BallGame(endGame: EndGame) : Game() {
         assets = Assets()
         batch = SpriteBatch()
 
-        setScreen(MainScreen(this))
+        setScreen(MainScreen(WeakReference<BallGame>(this)))
     }
 
     override fun render() {
@@ -65,5 +64,6 @@ class BallGame(endGame: EndGame) : Game() {
         println("BallGame dispose")
         batch.dispose()
         assets.dispose()
+        endGame_.clear()
     }
 }

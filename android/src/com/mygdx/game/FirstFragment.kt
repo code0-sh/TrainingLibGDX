@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference
 
 class FirstFragment : Fragment() {
 
-    var activity: WeakReference<AndroidLauncher>? = null
+    private lateinit var activity: WeakReference<AndroidLauncher>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity = WeakReference<AndroidLauncher>(getActivity() as? AndroidLauncher)
@@ -27,8 +27,7 @@ class FirstFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.clear()
-        activity = null
+        activity.clear()
     }
 }
 

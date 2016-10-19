@@ -10,20 +10,21 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Timer
+import java.lang.ref.WeakReference
 import java.util.*
 
-class MainScreen(game: BallGame) : ScreenAdapter() {
+class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private var balls: MutableList<Ball> = mutableListOf()
     private var stage: Stage
     private lateinit var freeTypeFontTimer: FreeTypeFont
     private lateinit var labelGroup: Group
     private lateinit var ballGroup: Group
-    internal val game: BallGame
+    private var game: BallGame
 
     init {
         println("MainScreen init")
 
-        this.game = game
+        this.game = game.get()
 
         // Stage
         stage = Stage()
@@ -53,6 +54,9 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
     override fun dispose() {
         println("MainScreen dispose")
         stage.dispose()
+        balls.clear()
+        labelGroup.clear()
+        ballGroup.clear()
     }
 
     /**
@@ -113,7 +117,7 @@ class MainScreen(game: BallGame) : ScreenAdapter() {
                     if (GameState.time < 0 && GameState.score != 0) {
                         Timer.instance().clear()
                         // 結果画面に遷移する
-                        game.screen = ResultScreen(game)
+                        game.screen = ResultScreen(WeakReference<BallGame>(game))
                         self.dispose()
                     }
                     freeTypeFontTimer.setText("TIME : ${GameState.time}")
