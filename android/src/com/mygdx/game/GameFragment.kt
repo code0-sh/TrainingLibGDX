@@ -12,23 +12,22 @@ import java.lang.ref.WeakReference
  */
 class GameFragment : AndroidFragmentApplication(), EndGame {
 
-    var activity: WeakReference<AndroidLauncher>? = null
+    private lateinit var activity: WeakReference<AndroidLauncher>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         activity = WeakReference<AndroidLauncher>(getActivity() as? AndroidLauncher)
-        return initializeForView(BallGame(this))
+        return initializeForView(BallGame(WeakReference<EndGame>(this)))
     }
     override fun onDestroy() {
         super.onDestroy()
-        activity?.clear()
-        activity = null
+        activity.clear()
     }
 
     /**
      * トップ画面に戻る
      */
     override fun returnToTop() {
-        val activity = activity?.get() ?: return
+        val activity = activity.get() ?: return
         activity.showTop()
     }
 }

@@ -9,16 +9,17 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import java.lang.ref.WeakReference
 
-class ResultScreen(game: BallGame) : ScreenAdapter() {
-    internal val game: BallGame
+class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
+    private var game: BallGame
     private var stage: Stage
     private var resultGroup: Group
     private var endGroup: Group
 
     init {
         println("ResultScreen init")
-        this.game = game
+        this.game = game.get()
 
         // Stage
         stage = Stage()
@@ -52,9 +53,15 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         stage.draw()
     }
 
+    override fun show() {
+        println("ResultScreen show")
+    }
+
     override fun dispose() {
         println("ResultScreen dispose")
         stage.dispose()
+        resultGroup.clear()
+        endGroup.clear()
     }
 
     /**
@@ -72,7 +79,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
                 // Top画面に遷移する
                 println("GAMEを終了")
-                game.endGame_.returnToTop()
+                game.endGame_.get().returnToTop()
                 self.dispose()
             }
         }
@@ -95,8 +102,9 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
                 // Main画面に遷移する
-                game.screen = MainScreen(game)
+                game.screen = MainScreen(WeakReference<BallGame>(game))
                 self.dispose()
+                println("Main画面に遷移する")
             }
         }
         button.addListener(listener)
@@ -110,10 +118,9 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
     private fun createResultBall() {
         val x = (Gdx.graphics.width - Ball.SIZE) / 2
         val y = (Gdx.graphics.height - Ball.SIZE) / 2
-        val image = Image(game.assets.ballAtlas[GameState.number])
-        val name = GameState.number.toString()
-
-        val ball = Ball(x, y, image, name)
+        val number = GameState.number
+        val image = Image(game.assets.ballAtlas[number])
+        val ball = Ball(x, y, image, number)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
         println("ball.position.x:${ball.position.x}")
@@ -183,7 +190,7 @@ class ResultScreen(game: BallGame) : ScreenAdapter() {
      */
     private fun createResultLabel() {
         // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!! " + GameState.flashNumber + "です")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(35)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)
