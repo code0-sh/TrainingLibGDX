@@ -160,4 +160,23 @@ class Ball(x:Float, y:Float, image: Image, number: Int) : DynamicGameObject(x, y
         position.add(directionX, velocity.y * deltaTime)
         this.image.setPosition(position.x, position.y)
     }
+
+    /**
+     * ボールのカラーコードを取得する
+     * @param number ボールの番号
+     */
+    fun getColorCode(number: Int): String {
+        val colorCode = when (number) {
+            0 -> "0000ff"
+            1 -> "00ff00"
+            2 -> "00ffff"
+            3 -> "3200ff"
+            4 -> "fcee21"
+            5 -> "ff0000"
+            6 -> "ff0064"
+            7 -> "ffffff"
+            else -> "unknown"
+        }
+        return colorCode
+    }
 }
