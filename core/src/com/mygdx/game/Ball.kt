@@ -2,6 +2,8 @@ package com.mygdx.game
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.mygdx.game.Ball.FlashNumber.ONE
+import com.mygdx.game.Ball.FlashNumber.ZERO
 
 /**
  * ボールのイメージ、初期位置を設定
@@ -10,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
  * @param image ボールのイメージ
  */
 
-class Ball(x:Float, y:Float, image: Image, name: String) : DynamicGameObject(x, y, image) {
+class Ball(x:Float, y:Float, image: Image, number: Int) : DynamicGameObject(x, y, image) {
 
     companion object {
         /**
@@ -61,9 +63,27 @@ class Ball(x:Float, y:Float, image: Image, name: String) : DynamicGameObject(x, 
     }
 
     /**
+     * ボールのフラッシュ
+     */
+    enum class FlashNumber(val number: Int) {
+        ZERO(0),
+        ONE(1)
+    }
+
+    /**
      * ボールの名前
      */
-    var name: String = ""
+    lateinit var name: String
+
+    /**
+     * ボールの番号
+     */
+    var number: Int = 0
+
+    /**
+     * ボールのフラッシュ
+     */
+    lateinit var flash: FlashNumber
 
     /**
      * ボールが面外にあるかどうか
@@ -79,7 +99,29 @@ class Ball(x:Float, y:Float, image: Image, name: String) : DynamicGameObject(x, 
         this.position = Vector2(x ,y)
         this.image = image
         this.image.setPosition(x, y)
-        this.name = name
+        this.number = number
+        this.name = when (number) {
+            0 -> "blue"
+            1 -> "lime"
+            2 -> "cyan"
+            3 -> "purple"
+            4 -> "yellow"
+            5 -> "red"
+            6 -> "pink"
+            7 -> "white"
+            else -> "unknown"
+        }
+        this.flash = when (number) {
+            0 -> ZERO
+            1 -> ONE
+            2 -> ZERO
+            3 -> ZERO
+            4 -> ZERO
+            5 -> ONE
+            6 -> ZERO
+            7 -> ONE
+            else -> ZERO
+        }
     }
 
     /**

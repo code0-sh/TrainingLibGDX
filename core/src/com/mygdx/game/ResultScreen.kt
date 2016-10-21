@@ -118,10 +118,9 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private fun createResultBall() {
         val x = (Gdx.graphics.width - Ball.SIZE) / 2
         val y = (Gdx.graphics.height - Ball.SIZE) / 2
-        val image = Image(game.assets.ballAtlas[GameState.number])
-        val name = GameState.number.toString()
-
-        val ball = Ball(x, y, image, name)
+        val number = GameState.number
+        val image = Image(game.assets.ballAtlas[number])
+        val ball = Ball(x, y, image, number)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
         println("ball.position.x:${ball.position.x}")
@@ -191,7 +190,7 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
      */
     private fun createResultLabel() {
         // Major Code Label
-        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!!")
+        val freeTypeFontMajorCode = FreeTypeFont("現在のライトアップエリアは" + GameState.major + "です!! " + GameState.flashNumber + "です")
         freeTypeFontMajorCode.setColor(Color.RED)
         freeTypeFontMajorCode.setFontSize(35)
         freeTypeFontMajorCode.setCenterPosition(Gdx.graphics.height * 0.8f)

@@ -1,15 +1,24 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.math.Vector2
+import com.mygdx.game.Ball.FlashNumber
 
 object GameState {
     private var scores: MutableList<Int> = mutableListOf()
+    // 一番多く選択されたボールの選択回数
     internal var score = 0
+    // 一番多く選択されたボールの番号
     internal var number = 0
+    // 認識されたBeaconのメジャー番号
     internal var major = -1
+    // タイマーの時間
     internal var time = 8
+    // タイマーの起動状態
     internal var isOnTimer = false
+    // 重力加速度
     internal val gravity = Vector2(0f, -98f)
+    // フラッシュ
+    internal var flashNumber: Int = 0
 
     /**
      * ゲーム状態の初期化
@@ -27,16 +36,22 @@ object GameState {
     }
 
     /**
-     * スコアと名前の更新
+     * 以下の値の更新
+     * 一番多く選択されたボールの選択回数
+     * 一番多く選択されたボールの番号
+     * フラッシュ対象のボール判定
      * @param index 選択されたボールの番号
      */
-    fun update(index: Int) {
-        scores[index] += 1
+    fun update(ball: Ball) {
+        scores[ball.number] += 1
         for (num in scores.indices) {
             if (score < scores[num]) {
                 score = scores[num]
                 number = num
             }
+        }
+        if (ball.flash == FlashNumber.ONE) {
+            flashNumber = FlashNumber.ONE.number
         }
     }
 }

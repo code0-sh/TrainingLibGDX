@@ -131,22 +131,22 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
      */
     private fun createBall() {
         val random = Random()
-        val num = random.nextInt(game.assets.ballAtlas.size)
+        val number = random.nextInt(game.assets.ballAtlas.size)
 
         val x = random.nextFloat() * (Gdx.graphics.width - Ball.SIZE)
         val y = Gdx.graphics.height.toFloat()
-        val image = Image(game.assets.ballAtlas[num])
-        val name = num.toString()
+        val image = Image(game.assets.ballAtlas[number])
 
-        val ball = Ball(x, y, image, name)
+        val ball = Ball(x, y, image, number)
         ball.setSize(Ball.SIZE, Ball.SIZE)
         ball.setOrigin(Ball.SIZE / 2, Ball.SIZE / 2)
         ball.velocity.add(0f, -250f)
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
-                println("Ball:No.${ball.name}がクリックされた！")
-                GameState.update(ball.name.toInt())
+                println("Ball:Name ${ball.name}がクリックされた！")
+                println("Ball:No ${ball.number}がクリックされた！")
+                GameState.update(ball)
                 println("GameState.number:" + GameState.number)
                 println("GameState.score:" + GameState.score)
 
