@@ -129,7 +129,9 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
-                resultBallAction(ball)
+                if (tapCount == 1) {
+                    resultBallAction(ball)
+                }
             }
         }
 
