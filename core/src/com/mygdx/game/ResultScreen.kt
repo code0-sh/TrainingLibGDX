@@ -151,6 +151,9 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
         actionSequence.addAction(moveByYAction)
         actionSequence.addAction(removeActorAction)
         actionSequence.run {
+            // バイブレーション
+            Gdx.input.vibrate(500)
+
             transmissionColor()
             resultGroupAction()
         }
