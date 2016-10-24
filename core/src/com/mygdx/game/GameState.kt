@@ -9,6 +9,8 @@ object GameState {
     internal var score = 0
     // 一番多く選択されたボールの番号
     internal var number = 0
+    // 一番多く選択されたボールの色のカラーコード
+    internal var colorCode = ""
     // 認識されたBeaconのメジャー番号
     internal var major = -1
     // タイマーの時間
@@ -33,6 +35,7 @@ object GameState {
         major = -1
         time = 8
         isOnTimer = false
+        colorCode = ""
     }
 
     /**
@@ -40,7 +43,7 @@ object GameState {
      * 一番多く選択されたボールの選択回数
      * 一番多く選択されたボールの番号
      * フラッシュ対象のボール判定
-     * @param index 選択されたボールの番号
+     * @param ball 選択されたボール
      */
     fun update(ball: Ball) {
         scores[ball.number] += 1
@@ -48,6 +51,7 @@ object GameState {
             if (score < scores[num]) {
                 score = scores[num]
                 number = num
+                colorCode = ball.getColorCode(num)
             }
         }
         if (ball.flash == FlashNumber.ONE) {

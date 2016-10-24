@@ -1,6 +1,7 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Net
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Group
@@ -150,6 +151,10 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
         actionSequence.addAction(moveByYAction)
         actionSequence.addAction(removeActorAction)
         actionSequence.run {
+            // バイブレーション
+            Gdx.input.vibrate(500)
+
+            transmissionColor()
             resultGroupAction()
         }
 
@@ -207,5 +212,31 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
         freeTypeFontSecondAttention.setFontSize(35)
         freeTypeFontSecondAttention.setCenterPosition(Gdx.graphics.height * 0.65f)
         resultGroup.addActor(freeTypeFontSecondAttention.label)
+    }
+
+    /**
+     * 色の送信処理
+     */
+    fun transmissionColor() {
+        val httpGet = Net.HttpRequest(Net.HttpMethods.GET)
+        httpGet.url = "http://153.126.138.57:8090/" + GameState.major + "/" + GameState.colorCode + "/" + GameState.flashNumber
+        println("httpGet.url:" + httpGet.url)
+
+        Gdx.net.sendHttpRequest(httpGet, object: Net.HttpResponseListener {
+            override fun handleHttpResponse(httpResponse: Net.HttpResponse) {
+                val status = httpResponse.resultAsString
+                println("status: success" + status)
+                //do stuff here based on response
+            }
+            override fun failed(t:Throwable) {
+                val status = "failed"
+                println("status: failed" + status)
+                //do stuff here based on the failed attempt
+            }
+            override fun cancelled() {
+                val status = "cancelled"
+                println("status: cancelled" + status)
+            }
+        })
     }
 }
