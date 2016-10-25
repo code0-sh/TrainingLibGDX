@@ -129,7 +129,9 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
 
         val listener = object: ClickListener() {
             override fun clicked(event: InputEvent, x:Float, y:Float) {
-                resultBallAction(ball)
+                if (tapCount == 1) {
+                    resultBallAction(ball)
+                }
             }
         }
 
@@ -144,7 +146,7 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private fun resultBallAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val scaleAction = Actions.scaleTo(Ball.MAGNIFICATION, Ball.MAGNIFICATION, Ball.MAGNIFICATION_TIME)
-        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Gdx.graphics.height.toFloat(), Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(scaleAction)
@@ -167,7 +169,7 @@ class ResultScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private fun resultGroupAction() {
         val actionSequence = Actions.sequence()
         val delayAction = Actions.delay(Ball.MAGNIFICATION_TIME + Ball.RISE_TIME)
-        val moveByYAction = Actions.moveTo(resultGroup.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(resultGroup.x, Gdx.graphics.height.toFloat(), Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
         actionSequence.addAction(delayAction)
         actionSequence.addAction(moveByYAction)

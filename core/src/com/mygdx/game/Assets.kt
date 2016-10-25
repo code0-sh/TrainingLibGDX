@@ -48,6 +48,8 @@ class Assets {
      */
     fun dispose() {
         assetManager.dispose()
+        finishTexture.dispose()
+        retryTexture.dispose()
     }
 
     /**

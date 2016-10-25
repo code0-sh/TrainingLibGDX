@@ -15,8 +15,6 @@ object GameState {
     internal var major = -1
     // タイマーの時間
     internal var time = 8
-    // タイマーの起動状態
-    internal var isOnTimer = false
     // 重力加速度
     internal val gravity = Vector2(0f, -98f)
     // フラッシュ
@@ -34,7 +32,6 @@ object GameState {
         number = 0
         major = -1
         time = 8
-        isOnTimer = false
         colorCode = ""
     }
 

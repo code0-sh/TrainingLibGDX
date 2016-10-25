@@ -39,12 +39,6 @@ class Ball(x:Float, y:Float, image: Image, number: Int) : DynamicGameObject(x, y
 
         /**
          * アニメーション
-         * ボールの上昇距離
-         */
-        internal const val RISE_DISTANCE = 1500f
-
-        /**
-         * アニメーション
          * ボールの上昇時間
          */
         internal const val RISE_TIME = 0.25f
@@ -86,7 +80,7 @@ class Ball(x:Float, y:Float, image: Image, number: Int) : DynamicGameObject(x, y
     lateinit var flash: FlashNumber
 
     /**
-     * ボールが面外にあるかどうか
+     * ボールが画面外にあるかどうか
      */
     var isOffScreen = false
 

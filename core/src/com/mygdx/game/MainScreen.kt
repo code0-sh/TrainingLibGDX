@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.utils.Timer
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -20,6 +19,8 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private lateinit var labelGroup: Group
     private lateinit var ballGroup: Group
     private var game: BallGame
+    private var sumCreateBallDelta = 0f
+    private var sumTimerDelta = 0f
 
     init {
         println("MainScreen init")
@@ -33,14 +34,35 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
         // GameState
         GameState.initGameSate()
 
-        // Timer
-        createTimer()
-
         // Label
         createLabel()
     }
 
     override fun render(delta: Float) {
+
+        // ボール生成
+        sumCreateBallDelta += delta
+        if (sumCreateBallDelta > 0.45) {
+            sumCreateBallDelta = 0f
+            createBall()
+        }
+
+        // Timer更新
+        sumTimerDelta += delta
+        if (sumTimerDelta > 1) {
+            sumTimerDelta = 0f
+            GameState.time -= 1
+            if (GameState.time < 0 && GameState.score == 0) {
+                GameState.time = 8
+            }
+            if (GameState.time < 0 && GameState.score != 0) {
+                // 結果画面に遷移する
+                game.screen = ResultScreen(WeakReference<BallGame>(game))
+                this.dispose()
+            }
+            freeTypeFontTimer.setText("TIME : ${GameState.time}")
+        }
+
         update(delta)
 
         stage.act(Gdx.graphics.deltaTime)
@@ -93,40 +115,6 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     }
 
     /**
-     * Timerの生成
-     */
-    private fun createTimer() {
-        if (!GameState.isOnTimer) {
-            GameState.isOnTimer = true
-
-            val self = this
-            // Timer
-            Timer.schedule(object: Timer.Task() {
-                override fun run() {
-                    // Ball
-                    createBall()
-                }
-            }, 1f, 0.45f)
-
-            Timer.schedule(object: Timer.Task() {
-                override fun run() {
-                    GameState.time -= 1
-                    if (GameState.time < 0 && GameState.score == 0) {
-                        GameState.time = 8
-                    }
-                    if (GameState.time < 0 && GameState.score != 0) {
-                        Timer.instance().clear()
-                        // 結果画面に遷移する
-                        game.screen = ResultScreen(WeakReference<BallGame>(game))
-                        self.dispose()
-                    }
-                    freeTypeFontTimer.setText("TIME : ${GameState.time}")
-                }
-            }, 1f, 1f)
-        }
-    }
-
-    /**
      * ボールの生成
      */
     private fun createBall() {
@@ -166,7 +154,7 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private fun ballAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val rotationAction = Actions.rotateBy(Ball.ROTATE, Ball.ROTATE_TIME)
-        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Gdx.graphics.height.toFloat(), Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(rotationAction)
