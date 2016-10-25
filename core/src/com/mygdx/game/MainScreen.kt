@@ -154,7 +154,7 @@ class MainScreen(game: WeakReference<BallGame>) : ScreenAdapter() {
     private fun ballAction(ball: Ball) {
         val actionSequence = Actions.sequence()
         val rotationAction = Actions.rotateBy(Ball.ROTATE, Ball.ROTATE_TIME)
-        val moveByYAction = Actions.moveTo(ball.position.x, Ball.RISE_DISTANCE, Ball.RISE_TIME)
+        val moveByYAction = Actions.moveTo(ball.position.x, Gdx.graphics.height.toFloat(), Ball.RISE_TIME)
         val removeActorAction = Actions.removeActor()
 
         actionSequence.addAction(rotationAction)

@@ -59,12 +59,11 @@ class FreeTypeFont(text: String) {
      */
     fun setCenterPosition(bottom: Float) {
         val font = createFont(fontSize)
-        generator.dispose()
-
         val layout = GlyphLayout(font, label.text)
         val fontX = (Gdx.graphics.width - layout.width) / 2
         val fontY = bottom
         label.setPosition(fontX, fontY)
+        generator.dispose()
     }
 
     /**
@@ -93,7 +92,7 @@ class FreeTypeFont(text: String) {
      */
     private fun setLabelStyle() {
         val font = createFont(fontSize)
-        generator.dispose()
         labelStyle = Label.LabelStyle(font, fontColor)
+        generator.dispose()
     }
 }
